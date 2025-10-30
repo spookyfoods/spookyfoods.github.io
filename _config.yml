@@ -1,2 +1,4 @@
 theme: jekyll-theme-time-machine
 title: spookyfoods
+url: "https://spookyfoods.github.io"
+baseurl: ""
