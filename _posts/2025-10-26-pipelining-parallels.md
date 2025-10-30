@@ -50,4 +50,44 @@ So, the first parallel is clear:
 The goal is the same.
 
 ---
-*Stay tuned for Part 2, where I'll explore the "workers" themselves—what what computer-architecture calls "Pipeline Stages" and what C++ calls `std::thread`🧵.*
+~*Stay tuned for Part 2, where I'll explore the "workers" themselves—what what computer-architecture calls "Pipeline Stages" and what C++ calls `std::thread`🧵.*~
+
+---
+
+## Part 2: The Workers (Stages vs. Threads)
+
+We have established that both hardware pipelining and software concurrency share the same goal: **increasing throughput**.
+Now, let's look at these curios 'workers' themselves.
+
+### The COA Concept: Pipeline Stages
+
+In computer architecture, the 'workers' are the **pipeline stages**. A pipeline stage is a singular piece of hardware with a very specific job, like the "Fetch" unit, the "Decode" unit, or the "Execute" (ALU) unit.
+
+>"I fear not the man who has practised one kick 1000 times but I fear one who has practised one kick 10000 times." ~Bruce Lee
+
+The magic of pipelining comes from this specialization. Each stage has a very specific job, so as soon as an instruction moves on, the now-free stage immediately pulls in the next one. This allows multiple instructions to be processed in parallel, each at a different stage of its life.
+
+### The Concurrency Parallel: `std::thread`
+
+So, how do we create a "specialist worker" in C++? The answer is the **`std::thread`**.
+
+A CPU core is a *general-purpose* worker. A `std::thread` (from the C++ `<thread>` library) is our way of giving that general-purpose worker a *specialized role*. It's a "worker" that we can create in our code and assign a specific function to run.
+
+The parallel is incredibly direct:
+* **COA Pipeline Stage:** A *hardware* specialist, like the "Fetch unit," whose job is physically built into the circuit.
+* **C++ `std::thread`:** A *software* specialist, which we create and assign a "job" (a function) to run, simulating a pipeline stage.
+
+For reference, if I were to build a software analogue to a 4-stage CPU pipeline, I would write four separate C++ functions:
+1.  `fetchFunction()`
+2.  `decodeFunction()`
+3.  `executeFunction()`
+4.  `writeFunction()`
+
+Then, in my `main()` program, I could launch four different `std::thread`s and assign each one a function. Just like that, I'd have four specialist workers ready to run in parallel, as would occur in a real pipelined system.
+
+So, the second parallel is:
+* **COA Pipeline Stage:** A specialized hardware unit.
+* **C++ `std::thread`:** A general-purpose CPU core, which can be assigned a specialized role through our code.
+
+---
+*In Part 3, we'll get to the most critical part: how do these workers pass information to each other without causing a quagmire of confusion? We'll look at 'Interstage Buffers' and how they form the basis of all pipelines. And also... `r a c e  c o n d i t i o n s` 🎃
