@@ -11,7 +11,7 @@ changelog:
   - date: 20252-10-29
     description: "Added Section 3, 'Winning by... waiting? How buffers solve race conditions'"
 last_updated: 2025-10-27
-categories: [Computer Science, Programming]
+categories: [Computer-Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
 series_title: "Pipelining Parallels"
 ---
@@ -167,3 +167,25 @@ Let's go through a step-by-step to make sure we're on the same page, we will use
     - **S1** is _immediately_ fed the I2​ instruction and starts its 2 ns calculation.
 
 ## The Concurrency Parallel: The "Disaster" (Race Conditions) 🎃
+
+Cool. so we have our hardware solution: a **1-item** in-tray (a buffer/register) combined with a synchronous gate (the system clock). This system is perfectly safe. By design.
+Now, let's build a parallel model, in code. 
+The first step is to build our in-tray. If we wanted a perfect 1-to-1 analogue of the hardware model, our obvious choice would be a single variable to act as our 1-item buffer.
+**But here, we are going to make a crucial change.** We are going to intentionally stray from the exact hardware analogue.
+
+Why? It's because although safe, the hardware model is quite rigid. The fast (**2ns**) 'Fetch' stage is forced to wait **8ns** for the slow (**10ns**) 'Execute' stage, all to stay in sync with the global clock. This is called tight coupling, and it's *in Larry David's voice* pretty-pretty inefficient.
+In our simulation, we can do better. Why should our `fetch_worker` be forced to stop and sleep just because our `execute_worker` is slow. So instead of a 1-item buffer, we are going to use a different pattern using a **multi-item-buffer**. An `std::queue`.
+By using a queue, we create a shock-absorber, of sorts.
+1. Our fast fetch_worker (the info 'Producer') can work ahead consequently as soon as it generates an ouptut, filling the queue with 5, 10, or 100 items.
+2. Our slow execute_worker (the 'Consumer') can then process those items at its own, slower pace.
+Wow, so this is the famous **Producer-Consumer** pattern, I saw plastered all over when I was doing my initial superficial review of what concurrency might me.
+It's far more flexible and efficient because it decouples our workers.
+
+**And... Disaster. This powerful, asynchronous pattern we've just created is also the exact source of a new problem.**.
+Our new conditions:
+- **Multiple workers** (std::threads) running at different, unpredictable speeds.
+- **No synchronous "gate"** (no global system clock) to keep them in check.
+- **A shared "in-tray"** (the std::queue) that our workers will try and access at the same time.
+
+Let's replay a situation which can help us highlight this **disaster**.
+What happens if our fast **fetch_worker** (pushing) and our slow **decode_worker** (popping) try to access the std::queue at the exact same nanosecond?
