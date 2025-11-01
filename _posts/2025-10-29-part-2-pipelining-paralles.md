@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Pipelining Parallels: My First Introduction to C++ Concurrency"
+title: "Pipelining Parallels: Part (p)two"
 author: Siddham
 date: 2025-10-29
 changelog:
