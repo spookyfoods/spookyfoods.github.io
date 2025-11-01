@@ -1,0 +1,63 @@
+---
+layout: default
+---
+
+<small>{{ page.date | date: "%-d %B %Y" }}</small>
+<h1>{{ page.title }}</h1>
+
+<p class="view">by {{ page.author | default: site.author }}</p>
+
+{% comment %} --- START: Last Updated & Changelog --- {% endcomment %}
+
+{% if page.last_updated %}
+  <small><strong>Last Updated: {{ page.last_updated | date: "%-d %B %Y" }}</strong></small>
+{% endif %}
+
+{% if page.changelog %}
+  <div class="changelog-box" style="background: #333; border: 1px solid #555; padding: 10px 15px; margin: 20px 0; border-radius: 5px;">
+    <strong>Article Status: In Progress</strong>
+    <ul style="margin-top: 10px; padding-left: 20px;">
+      {% for item in page.changelog %}
+        <li><small><strong>{{ item.date }}:</strong> {{ item.description }}</small></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% comment %} --- END: Last Updated & Changelog --- {% endcomment %}
+
+
+{{content}}
+
+
+{% if page.tags %}
+  <small>tags: <em>{{ page.tags | join: "</em> - <em>" }}</em></small>
+{% endif %}
+
+
+{% comment %} --- START: Series Navigation ("Read Next") --- {% endcomment %}
+
+{% if page.series_title %}
+<hr style="border-color: #555;">
+<div class="series-navigation">
+  
+  <h4 style="margin-bottom: 15px;">Part of the series: "{{ page.series_title }}"</h4>
+
+  {% if page.prev_post %}
+    {% assign prev = site.posts | where: "slug", page.prev_post | first %}
+    <a class="prev" href="{{ prev.url | relative_url }}" style="display: block; margin-bottom: 10px;">
+      &laquo; Read Previous: {{ prev.title }}
+    </a>
+  {% endif %}
+
+  {% if page.next_post %}
+    {% assign next = site.posts | where: "slug", page.next_post | first %}
+    <a class="next" href="{{ next.url | relative_url }}" style="display: block;">
+      Read Next: {{ next.title }} &raquo;
+    </a>
+  {% endif %}
+
+</div>
+{% endif %}
+
+{% comment %} --- END: Series Navigation --- {% endcomment %}
