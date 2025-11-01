@@ -110,5 +110,8 @@ Now. We must discuss how do these workers communicate and/or cooperate? How does
 This was quite englightening.
 
 ## The COA Concept: The In-Tray and the Gate
-![](../assets/Pipelining-Parallels/fourStagePipeline.png)
-*Figure 1 : Computer Organization [5e] by Hamacher et. al..*
+<figure>
+  <img src="{{ site.baseurl }}/assets/Pipelining-Parallels/fourStagePipeline.png" 
+       alt="A block diagram of a four-stage instruction pipeline. The stages are labeled F for Fetch instruction, D for Decode instruction, E for Execute operation, and W for Write results. These stages are connected in sequence and separated by interstage buffers labeled B1, B2, and B3.">
+  <figcaption>Figure 1 : Computer Organization [5e] by Hamacher et. al..</figcaption>
+</figure>
