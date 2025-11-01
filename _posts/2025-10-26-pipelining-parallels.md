@@ -4,6 +4,10 @@ title: "Pipelining Parallels: My First Introduction to C++ Concurrency"
 author: Siddham
 date: 2025-10-26
 changelog:
+  - date: 2025-10-26
+    description: "Added Section 1: 'The Goal'"
+  - date: 2025-10-27
+    description: "Added Section 2, 'The Workers (Stages vs. Threads)'"
 last_updated: 2025-10-27
 categories: [Computer Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
@@ -54,7 +58,7 @@ So, the first parallel is clear:
 The goal is the same.
 
 ---
-~*Stay tuned for Part 2, where I'll explore the "workers" themselves—what what computer-architecture calls "Pipeline Stages" and what C++ calls `std::thread`🧵.*~
+~~*Stay tuned for Part 2, where I'll explore the "workers" themselves—what what computer-architecture calls "Pipeline Stages" and what C++ calls `std::thread`🧵.*~~
 
 ---
 
@@ -67,7 +71,7 @@ Now, let's look at these curios 'workers' themselves.
 
 In computer architecture, the 'workers' are the **pipeline stages**. A pipeline stage is a singular piece of hardware with a very specific job, like the "Fetch" unit, the "Decode" unit, or the "Execute" (ALU) unit.
 
->"I fear not the man who has practised one kick 1000 times but I fear one who has practised one kick 10000 times." ~Bruce Lee
+>"I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times." ~Bruce Lee
 
 The magic of pipelining comes from this specialization. Each stage has a very specific job, so as soon as an instruction moves on, the now-free stage immediately pulls in the next one. This allows multiple instructions to be processed in parallel, each at a different stage of its life.
 
