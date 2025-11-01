@@ -2,6 +2,7 @@
 layout: post
 title: "Pipelining Parallels: My First Introduction to C++ Concurrency"
 author: Siddham
+last_updated: 2025-10-27
 categories: [Computer Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
 ---
