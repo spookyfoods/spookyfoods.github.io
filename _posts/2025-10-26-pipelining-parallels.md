@@ -100,7 +100,7 @@ So, the second parallel is:
 * **C++ `std::thread`:** A general-purpose CPU core, which can be assigned a specialized role through our code.
 
 ---
-~~*In Part 3, we'll get to the most critical part: how do these workers pass information to each other without causing a quagmire of confusion? We'll look at 'Interstage Buffers' and how they form the basis of all pipelines. And also... `r a c e  c o n d i t i o n s` 🎃*~~
+~~*In Part 3, we'll get to the most critical part: how do these workers pass information to each other without causing a quagmire of confusion? We'll look at 'Interstage Buffers' and how they form the basis of all pipelines. And also... `r a c e  c o n d i t i o n s` 🎃~~
 
 ---
 
@@ -189,29 +189,3 @@ Our new conditions:
 
 Let's replay a situation that can help us highlight this **disaster**.
 What happens if our fast **fetch_worker** (pushing) and our slow **decode_worker** (popping) try to access the std::queue at the exact same nanosecond?
-A function like sampleQueue.push() isn't one single indivisible step. It's not atomic in nature.
-It's many small steps in it's implementation (e.g., "check current size," "copy data to memory," "`size++`").
-What if the OS scheduler performs a context switch on the `fetch_worker` right after it copies the data, but before it executes `size++`?
-- `fetch_worker` (Thread 1) puts an instruction in the queue.
-    
-- `fetch_worker` gets paused. The queue's internal `size` variable still says `0`.
-    
-- `decode_worker` (Thread 2) runs. It checks the queue's `size`. It sees `0` and thinks the queue is empty (and maybe goes to sleep).
-    
-- The pipeline is now permanently broken. An instruction is "lost" in the queue forever, and our `decode_worker` may never wake up.
-
-This disaster has a formal name: a **Race Condition**.
-A race condition is a bug that occurs when the behavior of a program depends on the unpredictable timing of two or more threads "racing" to read and write a shared resource (our std::queue).
-
-So, the third parallel is:
-
-- **COA:** A _synchronous clock_(gate) + _1-item buffer_ **solves** the data handoff problem by design.
-    
-- **C++:** By _straying_ from the one-to-one analogue and using a _multi-item buffer_ (`std::queue`) with _asynchronous threads_, we create a more flexible system but also a massive new problem: **race conditions**.
-
-We have to build the gate-equivalent from the hardware implementation, ourselves.
-
----
-In Part 4, we'll do just that. We've identified the problem, so now we need a solution. We'll look at the C++ tool that acts as our very own software "gate" to protect our queue: the `std::mutex`.
-
----
