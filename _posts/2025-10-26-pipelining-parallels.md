@@ -4,25 +4,25 @@ title: "Pipelining Parallels: My First Introduction to C++ Concurrency"
 author: Siddham
 date: 2025-10-26
 changelog:
-  - date: 2025-10-26
+ - date: 2025-10-26
     description: "Added Section 1, 'The Goal'"
-  - date: 2025-10-27
+ - date: 2025-10-27
     description: "Added Section 2, 'The Workers (Stages vs. Threads)'"
-  - date: 20252-10-29
-    description: "Added Section 3, 'Winning by... waiting? How buffers solve race conditions'"
-last_updated: 2025-10-27
+ - date: 2025-10-29
+    description: "Added Section 3, 'Winning by... waiting? How buffers solve race conditions."
+last_updated: 2025-10-29
 categories: [Computer-Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
 series_title: "Pipelining Parallels"
 ---
 I've been learning C++ for a few months now, and I'm finally starting to get into the weeds. I have a habit of straying when I'm learning, and I recently got fascinated by concurrency while exploring what C++ is even used for. Every discussion spoke of it as something few can master. Naturally, I thought, 'Could it really be that tricky?'
-With my Operating Systems course being in the next semester, I figured this might be one of the best times to get into it. Just a few days later, we started Pipelining in our COA class and i started drawing some parallels(no pun intended) to concurrency, so i figured, why not sit down and just get the basics for concurrenct C++ down, for now.
+With my Operating Systems course being in the next semester, I figured this might be one of the best times to get into it. Just a few days later, we started Pipelining in our COA class, and I started drawing some parallels(no pun intended) to concurrency, so I figured, why not sit down and just get the basics for concurrent C++ down, for now.
 
 It turns out, the concept of **hardware pipelining** I've been studying is a near-perfect analogy for the fundamentals of concurrent programming. This blog series is my attempt to document my learning, starting with the first and most important parallel.
 
 ## Part 1: The Goal (It's All About Throughput)
 
-Our first introduction to pipelining(and why it's pretty darn good), was through the famous sequential laundry load experiment. This example did help me get some inferences down immediately.
+Our first introduction to pipelining(and why it's pretty darn good) was through the famous sequential laundry load experiment([here's a great explainer with brevity in mind](https://youtu.be/zPmfprtdzCE?si=3yXAnYWyE1Ni7SbV&t=101)). This example did help me get some inferences down immediately.
 
 ### The COA Concept: Throughput vs. Latency
 
@@ -33,18 +33,18 @@ If you have one load of laundry, it has three stages: Wash (30 min), Dry (40 min
 
 If you do this sequentially, you'd wait the full 90 minutes for the first load to be *completely* done before starting the second. This takes 6 hours for four loads.
 
-But a pipeline works differently. We can 'un-abstract' the entire process of a single load, into it's constituents of washing, drying, folding.
+But a pipeline works differently. We can 'un-abstract' the entire process of a single load into its constituents of washing, drying, and folding.
 As soon as the first load is done with the washer, the *next* load can go in. The washer doesn't have to sit idle and "wait till the previous instruction is completely done."
 
 By doing this, a new load of laundry is finished every 40 minutes (the time of the slowest stage, the dryer)
 
-This helps us capture one of the key ideas, **"Pipelining doesn't help latency of single task, it helps throughput of entire workload"**. The latency for one load is *still* 90 minutes, but the total throughput is massively increased.
+This helps us capture one of the key ideas, **"Pipelining doesn't help the latency of a single task, it helps with the throughput of the entire workload"**. The latency for one load is *still* 90 minutes, but the total throughput is massively increased.
 
 ### The Concurrency Parallel: One Core vs. Many Cores
 
 So, what does this have to do with C++? It turns out, the analogy is perfect.
 
-A modern CPU has multiple "cores". When I write a simple program, it runs *sequentially*. It only uses **one** of those cores. This is the "sequential laundry" method. It's like having four sets of washers and dryers in my house but only ever using one.
+A modern CPU has multiple "cores". When I write a simple program, it runs *sequentially*. It only uses **one** of those cores. This is the "sequential laundry" method. It's like having four sets of washers and dryers in my house, but only ever using one.
 
 **Concurrent programming** is the software equivalent of the "pipelined laundry" method. It's how I can write C++ code to use *all* (or at least, *more than one*) of my CPU cores at the same time.
 
@@ -60,14 +60,14 @@ So, the first parallel is clear:
 The goal is the same.
 
 ---
-~~*Stay tuned for Part 2, where I'll explore the "workers" themselves—what what computer-architecture calls "Pipeline Stages" and what C++ calls `std::thread`🧵.*~~
+~~*Stay tuned for Part 2, where I'll explore the "workers" themselves—what computer architecture calls "Pipeline Stages" and what C++ calls `std::thread`🧵.*~~
 
 ---
 
 ## Part 2: The Workers (Stages vs. Threads)
 
 We have established that both hardware pipelining and software concurrency share the same goal: **increasing throughput**.
-Now, let's look at these curios 'workers' themselves.
+Now, let's look at these curious 'workers' themselves.
 
 ### The COA Concept: Pipeline Stages
 
@@ -108,17 +108,17 @@ So, the second parallel is:
 
 Right. Through Part 1, we were able to settle on what our 'goal' actually is.
 In Part 2, we hired our workers to help us chip away at it.
-Now. We must discuss how do these workers communicate and/or cooperate? How does our `fetchFunction` worker pass on it's result to `decodeFunction`?
-This was quite englightening.
+Now. We must discuss how these workers communicate and/or cooperate. How does our `fetchFunction` worker pass on its result to `decodeFunction`?
+This was quite enlightening.
 
 ## The COA Concept: The In-Tray and the Gate
 <figure>
-  <img src="{{ site.baseurl }}/assets/Pipelining-Parallels/fourStagePipeline.png" 
+ <img src="{{ site.baseurl }}/assets/Pipelining-Parallels/fourStagePipeline.png" 
        alt="A block diagram of a four-stage instruction pipeline. The stages are labeled F for Fetch instruction, D for Decode instruction, E for Execute operation, and W for Write results. These stages are connected in sequence and separated by interstage buffers labeled B1, B2, and B3.">
-  <figcaption>Figure 1 : Computer Organization [5e] by Hamacher et. al..</figcaption>
+ <figcaption>Figure 1 : Computer Organization [5e] by Hamacher et. al..</figcaption>
 </figure>
-Pipeline stages aren't connected end to end, they are separated by Interstage Buffers.
-Initially, I thought, yep, makes sense. The buffer was an effective 'conveyer belt' of sorts, it decouples the stages, allowing, e.g: A 'Fetch' stage can simply dump-and-run its output into it's connected buffer(B1 in this instance). Correspondingly start working on the next instruction.
+Pipeline stages aren't connected end to end; they are separated by Interstage Buffers.
+Initially, I thought, yep, makes sense. The buffer was an effective 'conveyor belt' of sorts, it decouples the stages, allowing, e.g, a 'Fetch' stage can simply dump-and-run its output into its connected buffer(B1 in this instance). Correspondingly, start working on the next instruction.
 Honestly, I wasn't too happy with this explanation. I got stuck on a plot hole.
 >*If the faster stage (let's say Stage 1) finishes its job in 30 minutes but has to wait for the 40-minute clock, why does it need to "dump" its result into a buffer? Why can't it just "hold" the result for those 10 minutes, and then pass it to Stage 2 at the clock tick?*
 If it can wait, why the need for a separate "in-tray"? The answer to this should have been obvious to me, essentially:
@@ -174,11 +174,11 @@ The first step is to build our in-tray. If we wanted a perfect 1-to-1 analogue o
 **But here, we are going to make a crucial change.** We are going to intentionally stray from the exact hardware analogue.
 
 Why? It's because although safe, the hardware model is quite rigid. The fast (**2ns**) 'Fetch' stage is forced to wait **8ns** for the slow (**10ns**) 'Execute' stage, all to stay in sync with the global clock. This is called tight coupling, and it's *in Larry David's voice* pretty-pretty inefficient.
-In our simulation, we can do better. Why should our `fetch_worker` be forced to stop and sleep just because our `execute_worker` is slow. So instead of a 1-item buffer, we are going to use a different pattern using a **multi-item-buffer**. An `std::queue`.
-By using a queue, we create a shock-absorber, of sorts.
-1. Our fast fetch_worker (the info 'Producer') can work ahead consequently as soon as it generates an ouptut, filling the queue with 5, 10, or 100 items.
+In our simulation, we can do better. Why should our `fetch_worker` be forced to stop and sleep just because our `execute_worker` is slow. So instead of a 1-item buffer, we are going to use a different pattern using a **multi-item buffer**. An `std::queue`.
+By using a queue, we create a shock absorber, of sorts.
+1. Our fast fetch_worker (the info 'Producer') can work ahead, consequently, as soon as it generates an output, filling the queue with 5, 10, or 100 items.
 2. Our slow execute_worker (the 'Consumer') can then process those items at its own, slower pace.
-Wow, so this is the famous **Producer-Consumer** pattern, I saw plastered all over when I was doing my initial superficial review of what concurrency might me.
+Wow, so this is the famous **Producer-Consumer** pattern, I saw plastered all over when I was doing my initial superficial review of what concurrency might be.
 It's far more flexible and efficient because it decouples our workers.
 
 **And... Disaster. This powerful, asynchronous pattern we've just created is also the exact source of a new problem.**.
@@ -187,7 +187,7 @@ Our new conditions:
 - **No synchronous "gate"** (no global system clock) to keep them in check.
 - **A shared "in-tray"** (the std::queue) that our workers will try and access at the same time.
 
-Let's replay a situation which can help us highlight this **disaster**.
+Let's replay a situation that can help us highlight this **disaster**.
 What happens if our fast **fetch_worker** (pushing) and our slow **decode_worker** (popping) try to access the std::queue at the exact same nanosecond?
 A function like sampleQueue.push() isn't one single indivisible step. It's not atomic in nature.
 It's many small steps in it's implementation (e.g., "check current size," "copy data to memory," "`size++`").
