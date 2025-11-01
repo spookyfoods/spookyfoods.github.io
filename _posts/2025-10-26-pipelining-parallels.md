@@ -5,9 +5,11 @@ author: Siddham
 date: 2025-10-26
 changelog:
   - date: 2025-10-26
-    description: "Added Section 1: 'The Goal'"
+    description: "Added Section 1, 'The Goal'"
   - date: 2025-10-27
     description: "Added Section 2, 'The Workers (Stages vs. Threads)'"
+  - date: 20252-10-29
+    description: "Added Section 3, 'Winning by... waiting? How buffers solve race conditions'"
 last_updated: 2025-10-27
 categories: [Computer Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
@@ -115,3 +117,53 @@ This was quite englightening.
        alt="A block diagram of a four-stage instruction pipeline. The stages are labeled F for Fetch instruction, D for Decode instruction, E for Execute operation, and W for Write results. These stages are connected in sequence and separated by interstage buffers labeled B1, B2, and B3.">
   <figcaption>Figure 1 : Computer Organization [5e] by Hamacher et. al..</figcaption>
 </figure>
+Pipeline stages aren't connected end to end, they are separated by Interstage Buffers.
+Initially, I thought, yep, makes sense. The buffer was an effective 'conveyer belt' of sorts, it decouples the stages, allowing, e.g: A 'Fetch' stage can simply dump-and-run its output into it's connected buffer(B1 in this instance). Correspondingly start working on the next instruction.
+Honestly, I wasn't too happy with this explanation. I got stuck on a plot hole.
+>*If the faster stage (let's say Stage 1) finishes its job in 30 minutes but has to wait for the 40-minute clock, why does it need to "dump" its result into a buffer? Why can't it just "hold" the result for those 10 minutes, and then pass it to Stage 2 at the clock tick?*
+If it can wait, why the need for a separate "in-tray"? The answer to this should have been obvious to me, essentially:
+- A Pipeline Stage is made of '*Combinational*' logic. The very instant it's inputs change, it's reflected in the output simultaneously, there is no 'waiting' in this realm.
+- Whereas, the Interstage Buffer is made of '*Sequential* logic. It has a hold button, which is tied to the system clock.
+
+This aided in mending a seam that was being a bother. The buffer isn't just a convenience; it's a necessity. Without it, as soon as Pipeline Stage would be done with it's job, it would immediately forward it to the next stage, without a bother, indifferent of the fact, if the next stage is already busy, or if the clock cycle has hit yet!
+Let's go through a step-by-step to make sure we're on the same page, we will use a more simple 2 Stage Pipeline setup. Parameters: S1: Stage 1(takes 2ns), S2: Stage 2(takes 10ns), B1: Buffer, System Clock: 10ns;
+
+- **AT T=0 ns (The Clock Ticks!):**
+    
+    - **B1**'s "gate" opens. It latches the result of I0​ (which S1 had prepared). B1's output _instantly_ becomes the stable I0​ result.
+        
+    - **S2** (slow) sees this new, stable I0​ result at its input and _immediately_ starts its 10 ns calculation.
+        
+    - **S1** (fast) is fed the new I1​ instruction and _immediately_ starts its 2 ns calculation.
+        
+- **AT T=2 ns:**
+    
+    - **S1**'s calculation is **finished**. Its output wires (which are connected to B1's _input_) now hold the stable, final result for I1​.
+        
+    - **B1** sees this new I1​ result, but its "gate" is **closed**. It _ignores_ this new value.
+        
+    - **Crucially, B1** continues to output the _old_ I0​ result to S2.
+        
+    - **S2** is only 20% done with its I0​ calculation. It continues working, completely _shielded_ by B1 from S1's new, irrelevant-for-now result.
+        
+- **BETWEEN T=2 ns and T=10 ns (The 8ns Wait):**
+    
+    - **S1** is completely **IDLE**. It has done its job. It's now just "shouting" the I1​ result at B1's closed "gate" for the next 8 ns.
+        
+    - **S2** is _actively calculating_ I0​ for this entire duration.
+        
+    - **B1**'s only job is to be a **"shield,"** holding the I0​ result rock-solid so S2 can work in peace.
+        
+- **AT T=10 ns (The Clock Ticks Again!):**
+    
+    - This is the simultaneous handoff!
+        
+    - A final register latches the I0​ result from S2's output. I0​ is _done_.
+        
+    - **B1**'s "gate" _instantly_ opens and latches the I1​ result that S1 has had waiting for 8 ns. B1's output now switches from I0​ to I1​.
+        
+    - **S2**'s input instantly sees the new I1​ result from B1. It _immediately_ starts its 10 ns calculation on I1​.
+        
+    - **S1** is _immediately_ fed the I2​ instruction and starts its 2 ns calculation.
+
+## The Concurrency Parallel: The "Disaster" (Race Conditions) 🎃
