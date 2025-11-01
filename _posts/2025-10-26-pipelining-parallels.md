@@ -3,14 +3,14 @@ layout: post
 title: "Pipelining Parallels: My First Introduction to C++ Concurrency"
 author: Siddham
 date: 2025-10-26
-changelog:
-  - date: 2025-10-26
-    description: "Added Section 1, 'The Goal'"
-  - date: 2025-10-27
-    description: "Added Section 2, 'The Workers (Stages vs. Threads)'"
-  - date: 20252-10-29
-    description: "Added Section 3, 'Winning by... waiting? How buffers solve race conditions'"
-last_updated: 2025-10-27
+# changelog:
+#   - date: 2025-10-26
+#     description: "Added Section 1, 'The Goal'"
+#   - date: 2025-10-27
+#     description: "Added Section 2, 'The Workers (Stages vs. Threads)'"
+#   - date: 20252-10-29
+#     description: "Added Section 3, 'Winning by... waiting? How buffers solve race conditions'"
+last_updated: 2025-10-29
 categories: [Computer-Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
 series_title: "Pipelining Parallels"
