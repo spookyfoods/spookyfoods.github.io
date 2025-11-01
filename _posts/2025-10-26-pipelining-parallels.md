@@ -98,4 +98,17 @@ So, the second parallel is:
 * **C++ `std::thread`:** A general-purpose CPU core, which can be assigned a specialized role through our code.
 
 ---
-*In Part 3, we'll get to the most critical part: how do these workers pass information to each other without causing a quagmire of confusion? We'll look at 'Interstage Buffers' and how they form the basis of all pipelines. And also... `r a c e  c o n d i t i o n s` 🎃
+~~*In Part 3, we'll get to the most critical part: how do these workers pass information to each other without causing a quagmire of confusion? We'll look at 'Interstage Buffers' and how they form the basis of all pipelines. And also... `r a c e  c o n d i t i o n s` 🎃~~
+
+---
+
+## Part 3: Winning by... waiting? How buffers solve race conditions
+
+Right. Through Part 1, we were able to settle on what our 'goal' actually is.
+In Part 2, we hired our workers to help us chip away at it.
+Now. We must discuss how do these workers communicate and/or cooperate? How does our `fetchFunction` worker pass on it's result to `decodeFunction`?
+This was quite englightening.
+
+## The COA Concept: The In-Tray and the Gate
+![](../assets/Pipelining-Parallels/fourStagePipeline.png)
+*Figure 1 : Computer Organization [5e] by Hamacher et. al..*
