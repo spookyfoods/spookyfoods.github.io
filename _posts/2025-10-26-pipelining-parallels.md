@@ -14,7 +14,7 @@ last_updated: 2025-10-29
 categories: [Computer-Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
 series_title: "Pipelining Parallels"
-next_post: "bonus-rethinking-queue"
+prev_post: "bonus-rethinking-queue"
 ---
 I've been learning C++ for a few months now, and I'm finally starting to get into the weeds. I have a habit of straying when I'm learning, and I recently got fascinated by concurrency while exploring what C++ is even used for. Every discussion spoke of it as something few can master. Naturally, I thought, 'Could it really be that tricky?'
 With my Operating Systems course being in the next semester, I figured this might be one of the best times to get into it. Just a few days later, we started Pipelining in our COA class and i started drawing some parallels(no pun intended) to concurrency, so i figured, why not sit down and just get the basics for concurrenct C++ down, for now.
