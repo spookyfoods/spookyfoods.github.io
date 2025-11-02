@@ -7,6 +7,7 @@ last_updated: 2025-10-30
 categories: [Computer-Science, Programming]
 tags: [C++, Concurrency, Pipelining, Computer-Architecture]
 series_title: "Pipelining Parallels"
+prev_post: "pipelining-parallels"
 next_post: "part-2-pipelining-paralles"
 ---
 ## Beyond the ADT

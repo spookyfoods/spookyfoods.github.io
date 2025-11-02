@@ -2,7 +2,7 @@
 layout: post
 title: "Pipelining Parallels: Part (p)two"
 author: Siddham
-date: 2025-10-29
+date: 2025-10-31
 changelog:
   - date: 2025-10-29
     description: "Initializing Part 2"
