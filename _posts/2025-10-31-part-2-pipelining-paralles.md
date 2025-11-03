@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "⚠️In Progress:  Pipelining Parallels: Part (p)two"
+title: "⚠️In Progress:  Pipelining Parallels: Part Two, Practical Protection"
 author: Siddham
 date: 2025-10-31
 changelog:

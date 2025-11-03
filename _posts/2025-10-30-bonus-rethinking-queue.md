@@ -9,6 +9,7 @@ tags: [C++, Concurrency, Pipelining, Computer-Architecture]
 series_title: "Pipelining Parallels"
 prev_post: "pipelining-parallels"
 next_post: "part-2-pipelining-paralles"
+comments: true
 ---
 ## Beyond the ADT
 Treating data structures as black-boxes has some highly rewarding use cases, as it allows developers to focus on the higher-level interfacing with the data structure, instead of it's low-level implementation and other nooks and crannies.
