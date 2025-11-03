@@ -29,7 +29,7 @@ Our first introduction to pipelining(and why it's pretty darn good), was through
 
 If you have one load of laundry, it has three stages: Wash (30 min), Dry (40 min), and Fold (20 min).
 
-* **Latency** is the total time it takes for that *one* load to go from dirty to folded, in isolation. That's $30 + 40 + 20 = 90$ minutes.
+* **Latency** is the total time it takes for that *one* load to go from dirty to folded, in isolation. That's \$$30 + 40 + 20 = 90$$ minutes.
 * **Throughput** is the *rate* at which you finish *all* your laundry (e.g., four loads).
 
 If you do this sequentially, you'd wait the full 90 minutes for the first load to be *completely* done before starting the second. This takes 6 hours for four loads.
