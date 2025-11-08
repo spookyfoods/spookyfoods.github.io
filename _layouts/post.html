@@ -2,23 +2,132 @@
 layout: default
 ---
 
-<small>{{ page.date | date: "%-d %B %Y" }}</small>
-<h1>{{ page.title }}</h1>
-{% unless page.changelog %}
-  {% include reading-time.html %}
-{% endunless %}
-<p class="view">by {{ page.author | default: site.author }}</p>
+{% comment %}
+=============================================================================
+ STYLES
+ - All inline styles have been moved here for easier management.
+=============================================================================
+{% endcomment %}
+<style>
+  /* --- Post Header --- */
+  .post-header {
+    margin-bottom: 25px;
+  }
+  .post-header h1 {
+    margin-bottom: 10px;
+  }
+  .post-meta {
+    font-size: 0.9em;
+    color: #a0a0a0;
+  }
+  /* Adds a '•' separator between meta items */
+  .post-meta span:not(:last-child)::after {
+    content: " • ";
+    margin: 0 0.4em;
+  }
+  .post-meta .last-updated strong {
+    color: #c0c0c0; /* Make "Last Updated" stand out a bit */
+  }
 
-{% comment %} --- START: Last Updated & Changelog --- {% endcomment %}
+  /* --- Changelog Box --- */
+  .changelog-box {
+    background: #333;
+    border: 1px solid #555;
+    padding: 10px 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+  }
+  .changelog-box ul {
+    margin-top: 10px;
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
 
-{% if page.last_updated %}
-  <small><strong>Last Updated: {{ page.last_updated | date: "%-d %B %Y" }}</strong></small>
-{% endif %}
+  /* --- Post Footer (Tags & Series) --- */
+  .post-footer {
+    margin-top: 30px;
+  }
+  
+  /* --- Tags List --- */
+  .tags-list {
+    margin-bottom: 25px;
+  }
+  .tag-item {
+    display: inline-block;
+    background: #444;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 0.85em;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+  .tags-list strong {
+    font-size: 1.1em;
+    margin-right: 5px;
+  }
 
+  /* --- Series Navigation --- */
+  .series-navigation {
+    margin-top: 25px;
+  }
+  .series-navigation h4 {
+    margin-bottom: 15px;
+  }
+  .series-nav-link-prev,
+  .series-nav-link-next {
+    display: block;
+  }
+  .series-nav-link-prev {
+    margin-bottom: 10px;
+  }
+
+  /* --- Comments --- */
+  .comments-section {
+    margin-top: 30px;
+  }
+  
+  /* --- General --- */
+  .post-divider {
+    border-color: #555;
+  }
+
+</style>
+
+
+{% comment %}
+=============================================================================
+ POST HEADER
+ - Groups Title, Date, Author, Reading Time, and Last Updated.
+=============================================================================
+{% endcomment %}
+<header class="post-header">
+  <h1>{{ page.title }}</h1>
+  <div class="post-meta">
+    <span>{{ page.date | date: "%-d %B %Y" }}</span>
+    <span>by {{ page.author | default: site.author }}</span>
+    
+    {% unless page.changelog %}
+      <span>{% include reading-time.html %}</span>
+    {% endunless %}
+    
+    {% if page.last_updated %}
+      <span class="last-updated"><strong>Last Updated: {{ page.last_updated | date: "%-d %B %Y" }}</strong></span>
+    {% endif %}
+  </div>
+</header>
+
+
+{% comment %}
+=============================================================================
+ CHANGELOG
+ - Appears if `page.changelog` is set in frontmatter.
+=============================================================================
+{% endcomment %}
 {% if page.changelog %}
-  <div class="changelog-box" style="background: #333; border: 1px solid #555; padding: 10px 15px; margin: 20px 0; border-radius: 5px;">
+  <div class="changelog-box">
     <strong>Article Status: In Progress</strong>
-    <ul style="margin-top: 10px; padding-left: 20px;">
+    <ul>
       {% for item in page.changelog %}
         <li><small><strong>{{ item.date }}:</strong> {{ item.description }}</small></li>
       {% endfor %}
@@ -26,46 +135,73 @@ layout: default
   </div>
 {% endif %}
 
-{% comment %} --- END: Last Updated & Changelog --- {% endcomment %}
+
+{% comment %}
+=============================================================================
+ POST CONTENT
+ - The main body of your post.
+=============================================================================
+{% endcomment %}
+<article class="post-content">
+  {{content}}
+</article>
 
 
-{{content}}
+{% comment %}
+=============================================================================
+ POST FOOTER
+ - Groups Tags and Series Navigation.
+=============================================================================
+{% endcomment %}
+<footer class="post-footer">
 
-
-{% if page.tags %}
-  <small>tags: <em>{{ page.tags | join: "</em> - <em>" }}</em></small>
-{% endif %}
-
-
-{% comment %} --- START: Series Navigation ("Read Next") --- {% endcomment %}
-
-{% if page.series_title %}
-<hr style="border-color: #555;">
-<div class="series-navigation">
-  
-  <h4 style="margin-bottom: 15px;">Part of the series: "{{ page.series_title }}"</h4>
-
-  {% if page.prev_post %}
-    {% assign prev = site.posts | where: "slug", page.prev_post | first %}
-    <a class="prev" href="{{ prev.url | relative_url }}" style="display: block; margin-bottom: 10px;">
-      &laquo; Read Previous: {{ prev.title }}
-    </a>
+  {% comment %} --- START: Tags --- {% endcomment %}
+  {% if page.tags %}
+    <div class="tags-list">
+      <strong>Tags:</strong>
+      {% for tag in page.tags %}
+        <span class="tag-item">{{ tag }}</span>
+      {% endfor %}
+    </div>
   {% endif %}
+  {% comment %} --- END: Tags --- {% endcomment %}
 
-  {% if page.next_post %}
-    {% assign next = site.posts | where: "slug", page.next_post | first %}
-    <a class="next" href="{{ next.url | relative_url }}" style="display: block;">
-      Read Next: {{ next.title }} &raquo;
-    </a>
+
+  {% comment %} --- START: Series Navigation ("Read Next") --- {% endcomment %}
+  {% if page.series_title %}
+    <hr class="post-divider">
+    <div class="series-navigation">
+      
+      <h4 style="margin-bottom: 15px;">Part of the series: "{{ page.series_title }}"</h4>
+    
+      {% if page.prev_post %}
+        {% assign prev = site.posts | where: "slug", page.prev_post | first %}
+        <a class="series-nav-link-prev" href="{{ prev.url | relative_url }}">
+          &laquo; Read Previous: {{ prev.title }}
+        </a>
+      {% endif %}
+    
+      {% if page.next_post %}
+        {% assign next = site.posts | where: "slug", page.next_post | first %}
+        <a class="series-nav-link-next" href="{{ next.url | relative_url }}">
+          Read Next: {{ next.title }} &raquo;
+        </a>
+      {% endif %}
+    
+    </div>
   {% endif %}
+  {% comment %} --- END: Series Navigation --- {% endcomment %}
 
-</div>
-{% endif %}
-
-{% comment %} --- END: Series Navigation --- {% endcomment %}
+</footer>
 
 
-<hr style="border-color: #555;">
+{% comment %}
+=============================================================================
+ COMMENTS
+ - Giscus comments section.
+=============================================================================
+{% endcomment %}
+<hr class="post-divider">
 <div class="comments-section">
   <h2>Comments</h2>
   {% if page.comments %}
