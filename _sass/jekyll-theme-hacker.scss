@@ -202,6 +202,60 @@ hr {
   color: #b5e853;
 }
 
+/* Form Elements
+-------------------------------------------------- */
+
+/* Textboxes and Text Areas */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+textarea {
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  background: rgba(0, 0, 0, 0.3);
+  color: $body-foreground;
+  border: 1px dashed #b5e853; // Using the same green as hr/th
+  border-radius: 2px; // Matching 'pre'
+  padding: 10px;
+  margin-bottom: 15px; // Add some spacing
+  width: 100%;
+  box-sizing: border-box; // Ensures padding doesn't affect width
+
+  &:focus {
+    outline: none;
+    border-color: #63c0f5; // Using the link color for focus
+    border-style: solid;
+    box-shadow: 0 0 5px rgba(104, 182, 255, 0.5); // Match link text-shadow
+  }
+}
+
+/* Standard Buttons */
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  background: $conifer; // Using the header green
+  color: $body-background; // Using the dark background for text
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: 1px solid $conifer;
+  border-radius: 2px; // Matching 'pre' and text inputs
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  -webkit-font-smoothing: antialiased;
+
+  &:hover {
+    background: $body-background; // On hover, use body bg
+    color: $conifer; // And make text green
+    border: 1px solid $conifer;
+  }
+}
 /* Buttons
 */
 
