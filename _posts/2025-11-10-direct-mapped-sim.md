@@ -20,7 +20,7 @@ Enter memory addresses (one per line, space-separated, or comma-separated). Supp
 <br>
 
 <h2 id="outputHeader" style="display:none;">Results</h2>
-<pre id="outputArea" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; border-radius: 5px; overflow-x: auto;"></pre>
+<pre id="outputArea"></pre>
 
 <script src="{{ site.baseurl }}/assets/wasm/cache_sim.js"></script>
 
