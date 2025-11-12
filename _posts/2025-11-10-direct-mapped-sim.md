@@ -12,7 +12,31 @@ comments: true
 # Cache Simulator Online Demo
 
 Enter memory addresses (one per line, space-separated, or comma-separated). Supports hex (e.g., `0x140A0`) or decimal.
+    <style>
+        #addressInput {
+            background-color: #222222;
+            color: #ffffff;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Consolas', 'Monaco', monospace; 
+            font-size: 14px;
+            width: 100%; 
+            box-sizing: border-box; 
+        }
 
+        #addressInput::placeholder {
+            color: #aaaaaa;
+            opacity: 0.7;
+        }
+
+        #addressInput:focus {
+            outline: none; 
+            border-color: #00ff00; 
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.5); 
+        }
+</style>
 <textarea id="addressInput" rows="10" cols="50" placeholder="e.g., 0x4000 0x4004 0x8000 0x4000 0x8000 0x4000"></textarea>
 <br>
 <button onclick="runSimulation()">Run Simulation</button>
