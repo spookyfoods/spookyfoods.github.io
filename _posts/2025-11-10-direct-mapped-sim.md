@@ -22,6 +22,8 @@ Enter memory addresses (one per line, space-separated, or comma-separated). Supp
 <h2 id="outputHeader" style="display:none;">Results</h2>
 <pre id="outputArea"></pre>
 
+---
+[Source Code](https://github.com/spookyfoods/cacheSims)
 <script src="{{ site.baseurl }}/assets/wasm/cache_sim.js"></script>
 
 <script>
