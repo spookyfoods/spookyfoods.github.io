@@ -1,20 +1,13 @@
 @import "rouge-base16-dark";
+@import "default_colors";
 
+$body-background: $cod-grey !default;
+$body-foreground: $gallery !default;
+$header: $conifer !default;
+$blockquote-color: $silver-chalice !default;
+$blockquote-border: $dove-grey !default;
+$container-max-width: 1000px;
 
-/* IMPORT FONTS */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap');
-
-/* VARIABLE DEFINITIONS (Overriding defaults) */
-$bg-color: #0f1210;         /* Deepest charcoal/green */
-$paper-color: #1a1e1b;      /* Slightly lighter "page" background */
-$ink-primary: #a3cfa3;      /* Pale oxidized copper for text */
-$ink-dim: #5c7a5c;          /* Dimmer green for grid lines/borders */
-$ink-highlight: #c5eec5;    /* Brightest ink */
-$accent-gold: #cfaa68;      /* Muted gold for links */
-$border-color: #3e5242;     /* Greenish slate border */
-$container-max-width: 900px;
-
-/* Mixin from original file */
 @mixin media-max-width($max-width) {
   @media (max-width: $max-width) {
       @content;
@@ -24,299 +17,306 @@ $container-max-width: 900px;
 body {
   margin: 0;
   padding: 0;
-  background-color: $bg-color;
-  color: $ink-primary;
-  font-size: 18px; /* Slightly larger for readability */
-  line-height: 1.6;
-  font-family: 'IM Fell English', serif; /* The "Handwritten" look */
-  
-  /* CSS-ONLY TEXTURE: Aged Notebook Grid */
-  background-image: 
-      linear-gradient($ink-dim 1px, transparent 1px),
-      linear-gradient(90deg, $ink-dim 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: center top;
+  background: $body-background url("../images/bkg.png") 0 0;
+  color: $body-foreground;
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 
-/* General Layout */
+/* General & 'Reset' Stuff */
 
 .container {
   width: 90%;
   max-width: $container-max-width;
-  margin: 40px auto;
-  background-color: $paper-color;
-  padding: 40px 60px;
-  
-  /* The "Tome" Effect: Borders and Vignette Shadow */
-  border: 1px solid $border-color;
-  box-shadow: 
-      0 0 50px rgba(0, 0, 0, 0.9),
-      inset 0 0 80px rgba(0, 0, 0, 0.6); 
-  position: relative;
+  margin: 0 auto;
 }
-
-/* Decorative Corners for the Container */
-.container:before, .container:after {
-    content: "+"; 
-    position: absolute;
-    color: $ink-dim;
-    font-family: 'Cinzel', serif;
-    font-size: 24px;
-}
-.container:before { top: 10px; left: 10px; }
-.container:after { bottom: 10px; right: 10px; }
 
 section {
   display: block;
   margin: 0 0 20px 0;
 }
 
-/* Typography & Headings */
-
 h1, h2, h3, h4, h5, h6 {
   margin: 0 0 20px;
-  font-family: 'Cinzel', serif; /* Roman Stone Carving look */
-  text-transform: uppercase;
-  color: $ink-primary;
-  letter-spacing: 0.1em;
-  font-weight: normal;
-  text-shadow: none; /* Removed the neon glow */
-  border-bottom: 1px solid $ink-dim;
-  padding-bottom: 10px;
 }
 
 li {
-  line-height: 1.6;
+  line-height: 1.4 ;
 }
 
-/* Header Section */
+/* Header, <header>
+   header   - container
+   h1       - project name
+   h2       - project description
+*/
 
 header {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.1);
   width: 100%;
-  border-bottom: 2px double $ink-dim;
+  border-bottom: 1px dashed $conifer; //header;
   padding: 20px 0;
   margin: 0 0 40px 0;
-  text-align: center;
 }
 
 header h1 {
-  font-size: 36px;
+  font-size: 30px;
   line-height: 1.5;
-  margin: 0;
-  font-weight: 700;
-  color: $ink-highlight;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.8); /* Deep ink shadow */
-  border: none; /* Remove default header underline */
+  margin: 0 0 0 -40px;
+  font-weight: bold;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  color: $conifer;//$header;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1),
+               0 0 5px rgba(181, 232, 83, 0.1),
+               0 0 10px rgba(181, 232, 83, 0.1);
+  letter-spacing: -1px;
+  -webkit-font-smoothing: antialiased;
+  @include media-max-width($container-max-width) {
+    margin-left: 0;
+  }
 }
 
-/* Remove the "./" hacker prefix, add a decorative symbol */
+
 header h1:before {
-  content: "✦ ";
-  color: $ink-dim;
+  content: "./ ";
   font-size: 24px;
-  vertical-align: middle;
-}
-header h1:after {
-  content: " ✦";
-  color: $ink-dim;
-  font-size: 24px;
-  vertical-align: middle;
 }
 
 header h2 {
   font-size: 18px;
-  font-weight: 400;
-  font-style: italic;
-  color: $ink-dim;
-  font-family: 'IM Fell English', serif;
-  border: none;
-  text-transform: none;
-  letter-spacing: 0;
+  font-weight: 300;
+  color: #666;
 }
 
-/* Main Content */
+#downloads .btn {
+  display: inline-block;
+  text-align: center;
+  margin: 0;
+}
+
+/* Main Content
+*/
 
 #main_content {
   width: 100%;
   -webkit-font-smoothing: antialiased;
 }
-
 section img {
-  max-width: 100%;
-  border: 1px solid $ink-dim; /* Framed images */
-  filter: sepia(30%) contrast(90%); /* Slight aging effect on images */
+  max-width: 100%
 }
 
-/* Specific Heading Sizes within Content */
-#main_content h1 { font-size: 30px; border-bottom-style: double; }
-#main_content h2 { font-size: 24px; }
-#main_content h3 { font-size: 20px; border: none; font-style: italic; }
-#main_content h4 { font-size: 16px; border: none; }
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  color: $header;
+  letter-spacing: -0.03em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1),
+               0 0 5px rgba(181, 232, 83, 0.1),
+               0 0 10px rgba(181, 232, 83, 0.1);
+}
+
+#main_content h1 {
+  font-size: 30px;
+}
+
+#main_content h2 {
+  font-size: 24px;
+}
+
+#main_content h3 {
+  font-size: 18px;
+}
+
+#main_content h4 {
+  font-size: 14px;
+}
+
+#main_content h5 {
+  font-size: 12px;
+  text-transform: uppercase;
+  margin: 0 0 5px 0;
+}
+
+#main_content h6 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #999;
+  margin: 0 0 5px 0;
+}
 
 dt {
   font-style: italic;
   font-weight: bold;
-  color: $accent-gold; 
 }
 
-/* Lists */
 ul li {
-  list-style-type: none; /* Remove default bullets to use custom */
-  position: relative;
-  padding-left: 20px;
-}
-ul li::before {
-  content: "•";
-  color: $ink-dim;
-  position: absolute;
-  left: 0;
-  font-size: 1.2em;
+  list-style-image:url('../images/bullet.png');
 }
 
-/* Quotes */
 blockquote {
-  color: $ink-primary;
-  padding-left: 20px;
-  border-left: 2px solid $ink-dim;
-  font-style: italic;
-  background: rgba(0,0,0,0.2);
-  margin: 20px 0;
-  padding: 15px 20px;
+  color: $blockquote-color;
+  padding-left: 10px;
+  border-left: 1px dotted $blockquote-border;
 }
 
-/* Code Blocks & Pre */
 pre {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid $border-color;
-  padding: 15px;
-  font-size: 15px;
-  color: $ink-highlight;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  font-size: 16px;
+  color: #b5e853;
   border-radius: 2px;
-  font-family: 'IM Fell English', serif; /* Keeps the vibe, or use 'Courier Prime' for clearer code */
+  word-wrap: normal;
   overflow: auto;
+  overflow-y: hidden;
 }
 
 code.highlighter-rouge {
-  background: rgba(0,0,0,0.4);
-  padding: 2px 5px;
-  margin: 0;
-  color: $accent-gold; /* Gold code for contrast */
-  font-family: 'Courier Prime', monospace; /* Fallback to monospace for inline code */
-  border: 1px solid rgba(62, 82, 66, 0.5);
+  background: rgba(0,0,0,0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0px 3px;
+  margin: 0px -3px;
+  color: #aa759f;
+  border-radius: 2px;
 }
 
-/* Tables */
 table {
   width: 100%;
-  margin: 20px 0;
-  border-collapse: collapse;
+  margin: 0 0 20px 0;
 }
 
 th {
   text-align: left;
-  border-bottom: 2px solid $ink-dim;
-  padding: 10px;
-  font-family: 'Cinzel', serif;
+  border-bottom: 1px dashed #b5e853;
+  padding: 5px 10px;
 }
 
 td {
-  padding: 10px;
-  border-bottom: 1px dashed $ink-dim;
+  padding: 5px 10px;
 }
 
 hr {
   height: 0;
   border: 0;
-  border-bottom: 1px solid $ink-dim;
-  margin: 40px auto;
-  width: 50%; /* Short divider */
-}
-hr::after {
-  content: "∞"; /* Infinity symbol in the middle of HR */
-  display: block;
-  text-align: center;
-  margin-top: -0.8em;
-  background: $paper-color;
-  width: 40px;
-  margin-left: auto;
-  margin-right: auto;
-  color: $ink-dim;
+  border-bottom: 1px dashed #b5e853;
+  color: #b5e853;
 }
 
-/* Form Elements */
+/* Form Elements
+-------------------------------------------------- */
 
+/* Textboxes and Text Areas */
 input[type="text"],
 input[type="password"],
 input[type="email"],
+input[type="url"],
 input[type="search"],
+input[type="tel"],
 textarea {
-  font-family: 'IM Fell English', serif;
-  background: rgba(0, 0, 0, 0.2);
-  color: $ink-primary;
-  border: 1px solid $ink-dim;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  background: rgba(0, 0, 0, 0.3);
+  color: $body-foreground;
+  border: 1px dashed #b5e853; // Using the same green as hr/th
+  border-radius: 2px; // Matching 'pre'
   padding: 10px;
-  margin-bottom: 15px; 
+  margin-bottom: 15px; // Add some spacing
   width: 100%;
-  box-sizing: border-box; 
+  box-sizing: border-box; // Ensures padding doesn't affect width
 
   &:focus {
     outline: none;
-    border-color: $accent-gold; 
-    box-shadow: 0 0 5px rgba(207, 170, 104, 0.3); 
+    border-color: #63c0f5; // Using the link color for focus
+    border-style: solid;
+    box-shadow: 0 0 5px rgba(104, 182, 255, 0.5); // Match link text-shadow
   }
 }
 
-/* Buttons */
+/* Standard Buttons */
 button,
 input[type="submit"],
-.btn {
+input[type="reset"],
+input[type="button"] {
   display: inline-block;
-  background: transparent;
-  color: $ink-primary;
-  font-family: 'Cinzel', serif;
+  background: $conifer; // Using the header green
+  color: $body-background; // Using the dark background for text
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
   font-size: 14px;
   font-weight: bold;
-  padding: 10px 25px;
-  border: 1px solid $ink-primary;
+  padding: 10px 20px;
+  border: 1px solid $conifer;
+  border-radius: 2px; // Matching 'pre' and text inputs
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: none;
-  text-shadow: none;
-  border-radius: 0; /* Sharp edges */
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+  transition: all 0.2s ease-in-out;
+  -webkit-font-smoothing: antialiased;
 
-button:hover,
-input[type="submit"]:hover,
-.btn:hover {
-  background: $ink-dim;
-  color: $bg-color;
-  border-color: $ink-dim;
+  &:hover {
+    background: $body-background; // On hover, use body bg
+    color: $conifer; // And make text green
+    border: 1px solid $conifer;
+  }
 }
+/* Buttons
+*/
 
-/* Links */
-a {
-  color: $accent-gold;
+.btn {
+  display: inline-block;
+  background: -webkit-linear-gradient(top, rgba(40, 40, 40, 0.3), rgba(35, 35, 35, 0.3) 50%, rgba(10, 10, 10, 0.3) 50%, rgba(0, 0, 0, 0.3));
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: 2px solid rgba(0, 0, 0, 0.7);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.7);
+  border-top: 2px solid rgba(0, 0, 0, 1);
+  color: rgba(255, 255, 255, 0.8);
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 13px;
   text-decoration: none;
-  border-bottom: 1px dotted $accent-gold;
-  transition: color 0.2s;
-  text-shadow: none;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-a:hover {
-  color: $ink-highlight;
-  border-bottom-style: solid;
+.btn:hover {
+  background: -webkit-linear-gradient(top, rgba(40, 40, 40, 0.6), rgba(35, 35, 35, 0.6) 50%, rgba(10, 10, 10, 0.8) 50%, rgba(0, 0, 0, 0.8));
 }
 
-/* Utilities */
-.cf:before, .cf:after { content:""; display:table; }
-.cf:after { clear:both; }
-.cf { zoom:1; }
+.btn .icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin: 1px 8px 0 0;
+  float: left;
+}
+
+.btn-github .icon {
+  opacity: 0.6;
+  background: url("../images/blacktocat.png") 0 0 no-repeat;
+}
+
+/* Links
+   a, a:hover, a:visited
+*/
+
+a {
+  color: #63c0f5;
+  text-shadow: 0 0 5px rgba(104, 182, 255, 0.5);
+}
+
+/* Clearfix */
+
+.cf:before, .cf:after {
+  content:"";
+  display:table;
+}
+
+.cf:after {
+  clear:both;
+}
+
+.cf {
+  zoom:1;
+}
 
 #a-title {
   text-decoration: none;
-  border: none;
 }
