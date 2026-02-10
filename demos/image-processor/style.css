@@ -1,0 +1,238 @@
+:root {
+    /* PALETTE: Silt, Terracotta, Soot, and Faience (Glazed Ceramic) */
+    --bg-earth: #e6e0d4;       /* Sun-dried mud brick */
+    --bg-panel: #f2efe9;       /* Polished stone/limestone */
+    --accent-brick: #b35a3d;   /* Fired brick red */
+    --accent-copper: #bf865d;  /* Polished copper/bronze */
+    --accent-teal: #3d7a7a;    /* Faience/Oxidized copper */
+    --text-soot: #2b2626;      /* Charcoal/Soot */
+    --border-color: #8c7b6c;   /* Raw clay border */
+    
+    /* DIMENSIONS: Adhering to strict geometric ratios */
+    --spacing-unit: 1rem;
+    --border-width: 3px;
+    --radius-slight: 2px;      /* Very subtle rounding, mostly square */
+}
+
+/* GLOBAL RESET & TYPOGRAPHY */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-earth);
+    color: var(--text-soot);
+    font-family: 'Courier New', Courier, monospace; /* Utilitarian, carved feel */
+    margin: 0;
+    padding: 2rem;
+    line-height: 1.5;
+    /* Subtle grain texture using a noise-like gradient */
+    background-image: radial-gradient(#dcd6c8 20%, transparent 20%),
+                      radial-gradient(#dcd6c8 20%, transparent 20%);
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
+}
+
+/* HEADERS */
+h1, h2, h3 {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    border-bottom: var(--border-width) solid var(--accent-brick);
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    color: var(--text-soot);
+}
+
+h1 {
+    font-size: 1.8rem;
+    border-bottom: 6px double var(--accent-brick); /* Double line for hierarchy */
+}
+
+/* LAYOUT UTILITIES */
+hr {
+    border: 0;
+    height: var(--border-width);
+    background: var(--border-color);
+    margin: 2rem 0;
+    opacity: 0.5;
+}
+
+/* CONTAINERS & FIELDSETS (The "City Blocks") */
+fieldset {
+    background-color: var(--bg-panel);
+    border: var(--border-width) solid var(--border-color);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    /* Sharp corners, no radius */
+}
+
+legend {
+    background-color: var(--accent-brick);
+    color: var(--bg-panel);
+    padding: 0.2rem 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border: var(--border-width) solid var(--accent-brick);
+}
+
+/* CONTROLS & INPUTS */
+label {
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 0.5rem;
+    color: #5a4a42;
+}
+
+select, input[type="text"], input[type="file"] {
+    background: var(--bg-earth);
+    border: 2px solid var(--border-color);
+    padding: 0.5rem;
+    font-family: inherit;
+    color: var(--text-soot);
+    cursor: pointer;
+}
+
+select:focus, input:focus {
+    outline: none;
+    border-color: var(--accent-teal);
+    background: #fff;
+}
+
+/* BUTTONS (The "Seals") */
+button {
+    background-color: var(--bg-earth);
+    border: 2px solid var(--text-soot);
+    color: var(--text-soot);
+    padding: 0.6rem 1.2rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--border-color); /* Offset shadow for depth */
+    transition: all 0.1s ease;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+button:hover {
+    background-color: var(--accent-copper);
+    color: #fff;
+    border-color: var(--text-soot);
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0px var(--text-soot);
+}
+
+button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px var(--text-soot);
+}
+
+/* Special Primary Button */
+#btn-process {
+    background-color: var(--accent-teal);
+    color: #fff;
+    border-color: var(--text-soot);
+}
+
+#btn-process:hover {
+    background-color: #2a5a5a;
+}
+
+/* RANGE SLIDERS */
+input[type="range"] {
+    -webkit-appearance: none;
+    background: transparent;
+    width: 200px;
+    vertical-align: middle;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border: 1px solid var(--text-soot);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    height: 20px;
+    width: 10px;
+    background: var(--accent-brick);
+    border: 1px solid var(--text-soot);
+    -webkit-appearance: none;
+    margin-top: -7px; /* center thumb */
+    border-radius: 0; /* Square thumb */
+}
+
+/* WORKSPACE TABLE */
+table {
+    border-collapse: collapse;
+    background: var(--bg-panel);
+    border: var(--border-width) solid var(--text-soot);
+}
+
+th {
+    background: var(--text-soot);
+    color: var(--bg-earth);
+    padding: 1rem;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+td {
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    vertical-align: top;
+}
+
+/* CANVAS & IMAGES */
+img, canvas {
+    border: 4px solid var(--accent-copper); /* Copper framing */
+    background: #000; /* Contrast for the image */
+    display: block;
+    max-width: 100%;
+}
+
+/* LOGS (The "Tablet") */
+textarea#console-log {
+    width: 100%;
+    background-color: #2b2626;
+    color: var(--accent-copper); /* Copper text on dark stone */
+    border: 4px solid var(--border-color);
+    padding: 1rem;
+    font-size: 0.9rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* TELEMETRY METRICS */
+#metrics ul {
+    list-style-type: none; /* No bullets */
+    padding: 0;
+    display: flex;
+    gap: 2rem;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    background: #fff;
+}
+
+#metrics li {
+    font-weight: bold;
+    color: var(--accent-brick);
+}
+
+#metrics span {
+    color: var(--text-soot);
+    margin-left: 0.5rem;
+}
+
+/* UTILITY FOOTER */
+footer {
+    margin-top: 4rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    text-align: right;
+}

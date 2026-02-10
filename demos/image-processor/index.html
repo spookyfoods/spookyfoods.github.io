@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WASM Processor | Minimal</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* A little CSS to make it look decent */
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; padding: 20px; }
+        main { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        fieldset { border: 1px solid #ddd; padding: 15px; border-radius: 4px; }
+        legend { font-weight: bold; color: #555; }
+        table { border-collapse: collapse; margin-top: 20px; }
+        th { background: #eee; padding: 10px; border-bottom: 2px solid #ddd; }
+        td { border: 1px solid #eee; padding: 10px; height: 300px; width: 50%; vertical-align: middle; text-align: center; }
+        img, canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
+        button { cursor: pointer; background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <main>
+        <h1>WASM Image Bench</h1>
+
+        <section id="controls">
+            <fieldset>
+                <legend>Excavation Site</legend>
+                
+                <label for="file-upload">Select Artifact:</label>
+                <input type="file" id="file-upload" accept="image/*" disabled>
+                
+                <button type="button" id="btn-process" disabled><strong>PROCESS ARTIFACT</strong></button>
+                <span id="status-msg" style="margin-left: 10px; color: #666;">Loading Engine...</span>
+            </fieldset>
+        </section>
+
+        <section id="workspace">
+            <table width="100%">
+                <thead>
+                    <tr>
+                        <th>Raw Clay (Source)</th>
+                        <th>Fired Brick (Result)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td align="center" valign="middle">
+                            <img id="source-image" alt="Waiting for input..." />
+                        </td>
+                        
+                        <td align="center" valign="middle">
+                            <canvas id="output-canvas"></canvas>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="ppm_web.js"></script>
+
+    <script>
+        // --- Global State ---
+        let wasmModule = null;
+        let processor = null;
+
+        // UI Elements
+        const fileInput = document.getElementById('file-upload');
+        const btnProcess = document.getElementById('btn-process');
+        const statusMsg = document.getElementById('status-msg');
+        const sourceImage = document.getElementById('source-image');
+        const canvas = document.getElementById('output-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // --- Step 1: Initialize Wasm Engine ---
+        createModule().then(instance => {
+            wasmModule = instance;
+            
+            // Create the C++ Object (ImageProcessor)
+            processor = new wasmModule.ImageProcessor();
+            
+            // Unlock UI
+            fileInput.disabled = false;
+            statusMsg.textContent = "Engine Ready.";
+            console.log("Wasm Module Loaded & Processor Created");
+        });
+
+        // --- Step 2: Handle File Upload (JS -> C++) ---
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            statusMsg.textContent = "Uploading to C++ Memory...";
+
+            // A. Show Preview (Standard JS)
+            sourceImage.src = URL.createObjectURL(file);
+
+            // B. Read File as Bytes
+            const arrayBuffer = await file.arrayBuffer();
+            const jsData = new Uint8Array(arrayBuffer);
+
+            // C. Allocate Memory in Wasm (The "Bucket A")
+            const ptr = wasmModule._malloc(jsData.length);
+
+            // D. Copy Data to Wasm
+            wasmModule.HEAPU8.set(jsData, ptr);
+
+            // E. Call C++ to Decode
+            // processor.loadImage(pointer, size)
+            const success = processor.loadImage(ptr, jsData.length);
+
+            // F. Free the "Bucket A" (We don't need the compressed JPG anymore)
+            wasmModule._free(ptr);
+
+            if (success) {
+                statusMsg.textContent = "Image Loaded in C++ RAM.";
+                btnProcess.disabled = false; // Enable the process button
+                
+                // Optional: Draw the initial image to canvas
+                renderCanvas(); 
+            } else {
+                statusMsg.textContent = "Error: Failed to load image.";
+            }
+        });
+
+        // --- Step 3: Handle Process Button (C++ Logic) ---
+        btnProcess.addEventListener('click', () => {
+            if (!processor) return;
+
+            statusMsg.textContent = "Processing...";
+
+            // A. Run the Filter Algorithm (In C++)
+            processor.applyFilter();
+
+            // B. Update the Canvas
+            renderCanvas();
+
+            statusMsg.textContent = "Filter Applied.";
+        });
+
+        // --- Helper: Render C++ Pixels to Canvas ---
+        function renderCanvas() {
+            const width = processor.getWidth();
+            const height = processor.getHeight();
+
+            // Resize canvas to match image
+            canvas.width = width;
+            canvas.height = height;
+
+            // 1. Get the Address of "Bucket B" (The Pixels)
+            const pixelPtr = processor.getPixelDataPtr();
+
+            // 2. Create a JS View into Wasm Memory
+            // Uint8ClampedArray is required for Canvas ImageData
+            // We look directly at the Wasm Heap without copying!
+            const wasmPixels = new Uint8ClampedArray(
+                wasmModule.HEAPU8.buffer, 
+                pixelPtr, 
+                width * height * 4 // 4 bytes per pixel (RGBA)
+            );
+
+            // 3. Paint to Screen
+            const imageData = new ImageData(wasmPixels, width, height);
+            ctx.putImageData(imageData, 0, 0);
+        }
+    </script>
+</body>
+</html>
