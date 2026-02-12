@@ -6,17 +6,9 @@
     <title>WASM Processor | Minimal</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* A little CSS to make it look decent */
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; padding: 20px; }
-        main { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        fieldset { border: 1px solid #ddd; padding: 15px; border-radius: 4px; }
-        legend { font-weight: bold; color: #555; }
-        table { border-collapse: collapse; margin-top: 20px; }
-        th { background: #eee; padding: 10px; border-bottom: 2px solid #ddd; }
-        td { border: 1px solid #eee; padding: 10px; height: 300px; width: 50%; vertical-align: middle; text-align: center; }
-        img, canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
-        button { cursor: pointer; background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
+        /* Slider styling */
+        .slider-container { margin: 15px 0; }
+        input[type=range] { width: 100%; margin-top: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -31,6 +23,11 @@
                 <label for="file-upload">Select Artifact:</label>
                 <input type="file" id="file-upload" accept="image/*" disabled>
                 
+                <div class="slider-container">
+                    <label for="filter-slider">Filter Intensity: <strong id="slider-display">1</strong></label>
+                    <input type="range" id="filter-slider" min="1" max="25" step="2" value="1">
+                </div>
+
                 <button type="button" id="btn-process" disabled><strong>PROCESS ARTIFACT</strong></button>
                 <span id="status-msg" style="margin-left: 10px; color: #666;">Loading Engine...</span>
             </fieldset>
@@ -73,6 +70,15 @@
         const sourceImage = document.getElementById('source-image');
         const canvas = document.getElementById('output-canvas');
         const ctx = canvas.getContext('2d');
+        
+        // Slider Elements
+        const slider = document.getElementById('filter-slider');
+        const sliderDisplay = document.getElementById('slider-display');
+
+        // Update display when slider moves
+        slider.addEventListener('input', (e) => {
+            sliderDisplay.textContent = e.target.value;
+        });
 
         // --- Step 1: Initialize Wasm Engine ---
         createModule().then(instance => {
@@ -131,13 +137,17 @@
 
             statusMsg.textContent = "Processing...";
 
+            // Get the current slider value (parsed as integer)
+            const filterValue = parseInt(slider.value, 10);
+
             // A. Run the Filter Algorithm (In C++)
-            processor.applyFilter();
+            // Passing the slider value as requested
+            processor.applyFilter(filterValue);
 
             // B. Update the Canvas
             renderCanvas();
 
-            statusMsg.textContent = "Filter Applied.";
+            statusMsg.textContent = "Filter Applied (Strength: " + filterValue + ").";
         });
 
         // --- Helper: Render C++ Pixels to Canvas ---
