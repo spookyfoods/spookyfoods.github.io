@@ -1,176 +1,685 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBL Presentation | 2026</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { background-color: #020617; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gradient-text { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* TIMER UI - FIXED CONTRAST */
-        #timerContainer { background: #ffffff; color: #020617; box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 3px solid #3b82f6; z-index: 1000; }
-        @keyframes flicker { 0%, 100% { background-color: #ffffff; } 50% { background-color: #fca5a5; } }
-        .timer-warning { animation: flicker 1s infinite; border: 3px solid #ef4444 !important; color: #b91c1c !important; }
-        .timer-stop { background-color: #991b1b !important; color: #ffffff !important; border: 3px solid #f87171 !important; animation: none; }
-    </style>
-</head>
-<body onload="startTimer()">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Project Optic | Architecture Specification</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap");
+            body {
+                background-color: #020617;
+                color: #f8fafc;
+                font-family: "Plus Jakarta Sans", sans-serif;
+                scroll-behavior: smooth;
+            }
+            .glass {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .gradient-text {
+                background: linear-gradient(90deg, #60a5fa, #a855f7);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
 
-    <div id="timerContainer" class="fixed bottom-10 right-10 px-8 py-4 rounded-3xl flex items-center gap-4 transition-all">
-        <i class="fas fa-hourglass-start text-blue-600 text-2xl" id="timerIcon"></i>
-        <span id="displayTime" class="text-4xl font-black font-mono tracking-tighter">00:00</span>
-    </div>
-
-    <nav class="fixed w-full z-50 glass border-b border-slate-800/50 px-8 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <div class="flex flex-col text-left">
-                <span class="text-xl font-black text-white leading-none uppercase tracking-tighter">PBL <span class="text-blue-500 italic">2026</span></span>
-                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Dept. of Computer Science & Engineering</span>
-            </div>
-        </div>
-        <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-widest font-bold opacity-70">
-            <a href="#problem" class="hover:text-blue-400 transition">Problem</a>
-            <a href="#methodology" class="hover:text-blue-400 transition">Methodology</a>
-            <a href="#results" class="hover:text-blue-400 transition">Results</a>
-            <a href="#team" class="hover:text-blue-400 transition">Team</a>
-        </div>
-    </nav>
-
-    <main class="max-w-6xl mx-auto px-6 pt-48 pb-32 space-y-32">
-        
-        <section class="text-center">
-            <div class="inline-block px-4 py-1 border border-slate-800 rounded-full text-slate-500 text-[10px] font-mono mb-6 uppercase tracking-widest">ID: [YOUR_REG_NO]</div>
-            <h1 class="text-6xl md:text-7xl font-extrabold mb-8 uppercase leading-tight"><span class="gradient-text uppercase">[Project Title Here]</span></h1>
-            <p class="text-slate-400 max-w-2xl mx-auto italic text-lg leading-relaxed border-l-2 border-blue-500/30 pl-6 text-left">
-                "Hypothesis/Project Statement: Define the core research question or the primary objective of your development project."
-            </p>
-        </section>
-
-        <section id="problem" class="grid md:grid-cols-2 gap-12 items-stretch">
-            <div class="glass p-10 rounded-[2.5rem] flex flex-col justify-center border-l-4 border-blue-600">
-                <h2 class="text-3xl font-extrabold mb-6">Problem Statement</h2>
-                <p class="text-slate-400 leading-relaxed text-justify">Describe the specific challenge you are addressing. Why is this project necessary?</p>
-            </div>
-            <div class="space-y-6">
-                <div class="glass p-7 rounded-3xl border-r-4 border-blue-500/50">
-                    <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest mb-2">Literature Review / Market Research</h3>
-                    <p class="text-sm text-slate-500 italic">Summary of existing solutions or research papers analyzed.</p>
-                </div>
-                <div class="glass p-7 rounded-3xl border-r-4 border-purple-500/50">
-                    <h3 class="text-purple-400 font-bold text-xs uppercase tracking-widest mb-2">Research Gap / Innovation</h3>
-                    <p class="text-sm text-slate-500 italic">What makes your approach different or better than the State-of-the-Art?</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="methodology" class="space-y-12">
-            <h2 class="text-4xl font-black text-center uppercase tracking-tight">System <span class="text-blue-500">Methodology</span></h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass p-8 rounded-3xl text-center">
-                    <i class="fas fa-database text-blue-500 text-3xl mb-4"></i>
-                    <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Dataset / Input</h3>
-                    <p class="text-sm text-slate-500">[Source, size, and preprocessing details]</p>
-                </div>
-                <div class="glass p-8 rounded-3xl text-center">
-                    <i class="fas fa-microchip text-purple-500 text-3xl mb-4"></i>
-                    <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Model / Architecture</h3>
-                    <p class="text-sm text-slate-500">[Algorithms used or System Workflow]</p>
-                </div>
-                <div class="glass p-8 rounded-3xl text-center border-2 border-green-500/20 bg-green-500/5">
-                    <i class="fab fa-python text-green-500 text-3xl mb-4"></i>
-                    <h3 class="font-bold mb-4 uppercase text-xs tracking-widest text-green-400">Live Execution</h3>
-                    <a href="[LINK]" target="_blank" class="px-6 py-2 bg-green-600 rounded-full text-[10px] font-black hover:bg-green-500 transition shadow-lg shadow-green-900/40">VIEW CODE / DEMO</a>
-                </div>
-            </div>
-        </section>
-
-        <section id="results" class="glass p-12 rounded-[3.5rem] border-t-4 border-blue-500">
-            <h2 class="text-3xl font-black mb-12 text-center uppercase tracking-tight">Results & <span class="text-blue-500">Analysis</span></h2>
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div class="h-80"><canvas id="resultsChart"></canvas></div>
-                <div class="space-y-6">
-                    <div class="p-6 rounded-2xl bg-white/5 flex justify-between items-center border border-white/10 shadow-inner">
-                        <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Accuracy / Performance</span>
-                        <span class="text-blue-400 font-mono font-black text-3xl">XX.X%</span>
-                    </div>
-                    <p class="text-slate-500 text-sm italic text-justify leading-relaxed">Quantifiable outcomes and evaluation metrics compared to baselines.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="team" class="text-center pt-10 border-t border-slate-900">
-            <h2 class="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] mb-12">Academic Credits</h2>
-            <div class="flex flex-wrap justify-center gap-10">
-                <div class="glass px-12 py-8 rounded-[2rem] border-b-4 border-blue-600">
-                    <p class="text-[9px] font-bold text-blue-500 mb-2 uppercase tracking-widest">Project Guide</p>
-                    <p class="font-black text-xl text-slate-100">[Guide Name]</p>
-                </div>
-                <div class="glass px-12 py-8 rounded-[2rem] border-b-4 border-slate-700">
-                    <p class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Team Member 1</p>
-                    <p class="font-black text-xl text-slate-100">[Student Name]</p>
-                    <p class="text-[10px] text-slate-500 mt-1">[Reg No]</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="py-12 text-center bg-black/40 border-t border-slate-900">
-        <p class="text-slate-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-2">Manipal University Jaipur</p>
-        <p class="text-slate-500 text-[9px] font-medium tracking-[0.2em] uppercase opacity-50">Department of Computer Science & Engineering • 2026</p>
-    </footer>
-
-    <script>
-        // TIMER LOGIC
-        let sec = 0;
-        let timer = null;
-        function startTimer() {
-            timer = setInterval(() => {
-                sec++;
-                let m = Math.floor(sec / 60);
-                let s = sec % 60;
-                document.getElementById('displayTime').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                
-                if (sec >= 480 && sec < 600) { // 8-10 Mins Warning
-                    document.getElementById('timerContainer').classList.add('timer-warning');
-                    document.getElementById('timerIcon').classList.replace('fa-hourglass-start', 'fa-hourglass-half');
-                } else if (sec >= 600) { // 10 Mins Stop
-                    clearInterval(timer);
-                    document.getElementById('timerContainer').classList.replace('timer-warning', 'timer-stop');
-                    document.getElementById('displayTime').innerText = "10:00";
-                    document.getElementById('timerIcon').classList.replace('fa-hourglass-half', 'fa-hourglass-end');
+            /* TIMER UI - FIXED CONTRAST */
+            #timerContainer {
+                background: #ffffff;
+                color: #020617;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+                border: 3px solid #3b82f6;
+                z-index: 1000;
+            }
+            @keyframes flicker {
+                0%,
+                100% {
+                    background-color: #ffffff;
                 }
-            }, 1000);
-        }
-
-        // RESULTS CHART (Demo Data)
-        const ctx = document.getElementById('resultsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Existing System', 'Our Solution'],
-                datasets: [{
-                    data: [70, 92],
-                    backgroundColor: ['#1e293b', '#3b82f6'],
-                    borderRadius: 15,
-                    barThickness: 50
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { 
-                    y: { beginAtZero: true, grid: { color: '#ffffff05' }, ticks: { color: '#475569' } },
-                    x: { grid: { display: false }, ticks: { color: '#475569' } }
+                50% {
+                    background-color: #fca5a5;
                 }
             }
-        });
-    </script>
-</body>
+            .timer-warning {
+                animation: flicker 1s infinite;
+                border: 3px solid #ef4444 !important;
+                color: #b91c1c !important;
+            }
+            .timer-stop {
+                background-color: #991b1b !important;
+                color: #ffffff !important;
+                border: 3px solid #f87171 !important;
+                animation: none;
+            }
+
+            /* Custom Utilities */
+            .layer-badge {
+                font-size: 0.65rem;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                font-weight: 800;
+                opacity: 0.8;
+            }
+            .code-snippet {
+                font-family: "Fira Code", monospace;
+                background: rgba(0, 0, 0, 0.5);
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+                color: #a5b4fc;
+                font-size: 0.8em;
+            }
+        </style>
+    </head>
+    <body onload="startTimer()">
+        <div
+            id="timerContainer"
+            class="fixed bottom-10 right-10 px-8 py-4 rounded-3xl flex items-center gap-4 transition-all"
+        >
+            <i
+                class="fas fa-hourglass-start text-blue-600 text-2xl"
+                id="timerIcon"
+            ></i>
+            <span
+                id="displayTime"
+                class="text-4xl font-black font-mono tracking-tighter"
+                >00:00</span
+            >
+        </div>
+
+        <nav
+            class="fixed w-full z-50 glass border-b border-slate-800/50 px-8 py-4 flex justify-between items-center"
+        >
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col text-left">
+                    <span
+                        class="text-xl font-black text-white leading-none uppercase tracking-tighter"
+                        >PROJECT
+                        <span class="text-blue-500 italic">OPTIC</span></span
+                    >
+                    <span
+                        class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1"
+                        >High-Performance Geospatial Runtime</span
+                    >
+                </div>
+            </div>
+            <div
+                class="hidden md:flex gap-8 text-[11px] uppercase tracking-widest font-bold opacity-70"
+            >
+                <a href="#problem" class="hover:text-blue-400 transition"
+                    >The "I/O Wall"</a
+                >
+                <a href="#architecture" class="hover:text-blue-400 transition"
+                    >Core Architecture</a
+                >
+                <a href="#pipeline" class="hover:text-blue-400 transition"
+                    >Data Pipeline</a
+                >
+                <a href="#roadmap" class="hover:text-blue-400 transition"
+                    >Roadmap</a
+                >
+                <a
+                    href="#future-ml"
+                    class="hover:text-blue-400 transition text-purple-400"
+                    >Future: ML & DSL</a
+                >
+            </div>
+        </nav>
+
+        <main class="max-w-6xl mx-auto px-6 pt-48 pb-32 space-y-32">
+            <section class="text-center">
+                <div
+                    class="inline-block px-4 py-1 border border-slate-800 rounded-full text-slate-500 text-[10px] font-mono mb-6 uppercase tracking-widest"
+                >
+                    Target: Edge Devices / x86_64 Linux (Drones)
+                </div>
+                <h1
+                    class="text-6xl md:text-7xl font-extrabold mb-8 uppercase leading-tight"
+                >
+                    <span class="gradient-text">Projct Optic</span><br />Bare
+                    Metal, Clothed Intelligence
+                </h1>
+                <p
+                    class="text-slate-400 max-w-3xl mx-auto italic text-lg leading-relaxed border-l-2 border-blue-500/30 pl-6 text-left"
+                >
+                    Core Mission: To eliminate the I/O Wall in remote sensing by
+                    processing gigapixel-scale 16-bit multispectral data
+                    (Sentinel-2 L1C/L2A) faster than the disk can read it,
+                    utilizing a custom Zero-Copy architecture.
+                </p>
+            </section>
+
+            <section
+                id="problem"
+                class="grid md:grid-cols-2 gap-12 items-stretch"
+            >
+                <div
+                    class="glass p-10 rounded-[2.5rem] flex flex-col justify-center border-l-4 border-blue-600"
+                >
+                    <h2 class="text-3xl font-extrabold mb-6">
+                        The Problem: Abstraction Overhead
+                    </h2>
+                    <p class="text-slate-400 leading-relaxed text-justify mb-4">
+                        Standard GIS tools (GDAL/Rasterio) rely on heavy
+                        abstractions and Python bindings. This creates
+                        significant bottlenecks when processing 100-megapixel
+                        images on edge hardware:
+                    </p>
+                    <ul
+                        class="list-disc list-inside text-slate-400 text-sm space-y-3"
+                    >
+                        <li>
+                            <strong class="text-white">Memory Bloat:</strong>
+                            Loading a full 4GB TIFF into RAM causes immediate
+                            swapping on field laptops.
+                        </li>
+                        <li>
+                            <strong class="text-white">The GIL:</strong>
+                            Python's Global Interpreter Lock makes per-pixel
+                            manipulation prohibitively slow.
+                        </li>
+                        <li>
+                            <strong class="text-white">Cache Misses:</strong>
+                            "Vector of Vectors" (Jagged Arrays) destroys CPU
+                            cache locality.
+                        </li>
+                    </ul>
+                </div>
+                <div class="space-y-6">
+                    <div
+                        class="glass p-7 rounded-3xl border-r-4 border-blue-500/50"
+                    >
+                        <h3
+                            class="text-blue-400 font-bold text-xs uppercase tracking-widest mb-2"
+                        >
+                            State-of-the-Art Analysis
+                        </h3>
+                        <p class="text-sm text-slate-500 italic">
+                            Existing solutions like GDAL utilize standard OS
+                            paging. Project Optic replaces this with manual
+                            virtual memory management to strictly control L1/L2
+                            cache usage.
+                        </p>
+                    </div>
+                    <div
+                        class="glass p-7 rounded-3xl border-r-4 border-purple-500/50"
+                    >
+                        <h3
+                            class="text-purple-400 font-bold text-xs uppercase tracking-widest mb-2"
+                        >
+                            Our Innovation: Zero-Copy
+                        </h3>
+                        <p class="text-sm text-slate-500 italic">
+                            We implement a
+                            <strong>"Rolling Ring Buffer"</strong> strategy.
+                            Instead of loading the image, we `mmap` the file and
+                            "decay" memory pages instantly after processing,
+                            ensuring O(1) memory usage regardless of image
+                            height.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="architecture" class="space-y-12">
+                <h2
+                    class="text-4xl font-black text-center uppercase tracking-tight"
+                >
+                    System <span class="text-blue-500">Architecture</span>
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div
+                        class="glass p-8 rounded-3xl relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 right-0 bg-slate-800 px-4 py-2 rounded-bl-2xl layer-badge text-blue-400"
+                        >
+                            Layer 0
+                        </div>
+                        <i
+                            class="fas fa-hdd text-slate-600 text-3xl mb-4 group-hover:text-blue-500 transition-colors"
+                        ></i>
+                        <h3 class="font-bold text-xl mb-2">
+                            Storage Engine (Virtual Memory)
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Utilizes POSIX <code>mmap</code> with a custom
+                            <strong>Virtual Tile Manager</strong>. The "Rolling
+                            Ring Buffer" keeps only active scanlines in cache.
+                            As lines are processed, the memory is "decayed"
+                            (reused) for incoming lines.
+                        </p>
+                    </div>
+
+                    <div
+                        class="glass p-8 rounded-3xl relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 right-0 bg-slate-800 px-4 py-2 rounded-bl-2xl layer-badge text-purple-400"
+                        >
+                            Layer 1
+                        </div>
+                        <i
+                            class="fas fa-microchip text-slate-600 text-3xl mb-4 group-hover:text-purple-500 transition-colors"
+                        ></i>
+                        <h3 class="font-bold text-xl mb-2">
+                            Compute Core (SIMD)
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Data is laid out in flat 1D arrays
+                            (<code>std::vector&lt;float&gt;</code>). We utilize
+                            manual
+                            <strong>AVX2 Intrinsics</strong>
+                            (<code>_mm256_fmadd_ps</code>) to process 8 pixels
+                            per CPU cycle. We replace standard 2D convolution
+                            with <strong>Separable Kernels</strong> (two 1D
+                            passes), reducing complexity by ~85%.
+                        </p>
+                    </div>
+
+                    <div
+                        class="glass p-8 rounded-3xl relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 right-0 bg-slate-800 px-4 py-2 rounded-bl-2xl layer-badge text-green-400"
+                        >
+                            Layer 2
+                        </div>
+                        <i
+                            class="fas fa-memory text-slate-600 text-3xl mb-4 group-hover:text-green-500 transition-colors"
+                        ></i>
+                        <h3 class="font-bold text-xl mb-2">Memory Arena</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Standard <code>malloc/new</code> causes heap
+                            fragmentation. We implement a
+                            <strong>Linear "Bump" Arena Allocator</strong> that
+                            pre-allocates a massive block at startup. Allocation
+                            is a simple integer increment; deallocation is
+                            instant.
+                        </p>
+                    </div>
+
+                    <div
+                        class="glass p-8 rounded-3xl relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 right-0 bg-slate-800 px-4 py-2 rounded-bl-2xl layer-badge text-orange-400"
+                        >
+                            Layer 3
+                        </div>
+                        <i
+                            class="fas fa-network-wired text-slate-600 text-3xl mb-4 group-hover:text-orange-500 transition-colors"
+                        ></i>
+                        <h3 class="font-bold text-xl mb-2">
+                            Scheduler (Concurrency)
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Implements a
+                            <strong>"Rolling Wave" Producer-Consumer</strong>
+                            model. Scout Threads prefetch raw bytes, while
+                            Builder Threads process tiles using Work-Stealing
+                            and an "N-2" Dependency Rule to handle halo rows
+                            without locking.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                id="pipeline"
+                class="glass p-12 rounded-[3.5rem] border-t-4 border-blue-500"
+            >
+                <h2
+                    class="text-3xl font-black mb-12 text-center uppercase tracking-tight"
+                >
+                    The <span class="text-blue-500">Data Pipeline</span>
+                </h2>
+                <div
+                    class="relative border-l-2 border-slate-700 ml-6 space-y-10"
+                >
+                    <div class="relative pl-8">
+                        <span
+                            class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-blue-500"
+                        ></span>
+                        <h4 class="font-bold text-lg text-white">
+                            1. Ingest & Map
+                        </h4>
+                        <p class="text-slate-400 text-sm mt-1">
+                            CLI receives <code>input.tif</code>. Header parser
+                            reads IFD tags. <code>mmap</code> assigns file
+                            descriptor to virtual memory.
+                        </p>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <span
+                            class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-purple-500"
+                        ></span>
+                        <h4 class="font-bold text-lg text-white">
+                            2. Stream & Compute (Pass 1 & 2)
+                        </h4>
+                        <p class="text-slate-400 text-sm mt-1">
+                            Scout Thread loads rows into the Arena. Threads
+                            calculate row-wise sums (AVX), then column-wise sums
+                            using Rolling Buffer history.
+                        </p>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <span
+                            class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-green-500"
+                        ></span>
+                        <h4 class="font-bold text-lg text-white">
+                            3. Analysis & Intelligence
+                        </h4>
+                        <p class="text-slate-400 text-sm mt-1">
+                            Optional
+                            <strong>K-Means Clustering</strong> (Lloyd’s
+                            Algorithm) is applied to classify pixels into
+                            "Water," "Vegetation," and "Urban" without training
+                            data. Distance calcs are vectorized.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                id="roadmap"
+                class="text-center pt-10 border-t border-slate-900"
+            >
+                <h2
+                    class="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] mb-12"
+                >
+                    Technical Roadmap & Future Work
+                </h2>
+                <div class="grid md:grid-cols-4 gap-6 text-left">
+                    <div
+                        class="glass p-6 rounded-2xl border-b-2 border-slate-700"
+                    >
+                        <p
+                            class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2"
+                        >
+                            Phase 1
+                        </p>
+                        <p class="font-bold text-white">Metal Core</p>
+                        <p class="text-xs text-slate-500 mt-2">
+                            MatrixDense class & AVX2 math implementation.
+                        </p>
+                    </div>
+
+                    <div
+                        class="glass p-6 rounded-2xl border-b-2 border-slate-700"
+                    >
+                        <p
+                            class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2"
+                        >
+                            Phase 2
+                        </p>
+                        <p class="font-bold text-white">Math Upgrade</p>
+                        <p class="text-xs text-slate-500 mt-2">
+                            Separable Kernels for O(N) complexity reduction.
+                        </p>
+                    </div>
+
+                    <div
+                        class="glass p-6 rounded-2xl border-b-2 border-slate-700"
+                    >
+                        <p
+                            class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2"
+                        >
+                            Phase 4
+                        </p>
+                        <p class="font-bold text-white">Concurrency</p>
+                        <p class="text-xs text-slate-500 mt-2">
+                            Thread Pool with Work Stealing & Split-Row
+                            Parallelism.
+                        </p>
+                    </div>
+
+                    <div
+                        class="glass p-6 rounded-2xl border-b-2 border-blue-500 bg-blue-500/10"
+                    >
+                        <p
+                            class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mb-2"
+                        >
+                            Phase 6
+                        </p>
+                        <p class="font-bold text-white">Delivery</p>
+                        <p class="text-xs text-slate-400 mt-2">
+                            Dockerize & Benchmarking Script
+                            (<code>demo.py</code>).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section
+                id="future-ml"
+                class="space-y-12 pt-12 border-t border-slate-900"
+            >
+                <h2
+                    class="text-3xl font-black text-center uppercase tracking-tight"
+                >
+                    Future Expansion:
+                    <span class="gradient-text">Project Cortex</span> & DSL
+                </h2>
+
+                <div class="glass p-10 rounded-[3rem] border border-slate-800">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="bg-red-500/20 p-3 rounded-xl text-red-400">
+                            <i class="fas fa-brain text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">
+                                Phase 7: Bare-Metal Edge ML
+                            </h3>
+                            <p
+                                class="text-xs text-slate-500 uppercase tracking-widest font-bold"
+                            >
+                                Planned Q4 2026
+                            </p>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        We will extend the C++ core to support
+                        <strong>inference-only execution</strong> of lightweight
+                        ML models directly on the edge device, bypassing heavy
+                        frameworks like TensorFlow.
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div
+                            class="bg-black/30 p-6 rounded-2xl border border-slate-800"
+                        >
+                            <h4
+                                class="text-red-400 font-bold text-xs uppercase mb-2"
+                            >
+                                Quantization Strategy
+                            </h4>
+                            <p class="text-xs text-slate-400">
+                                Weights will be compressed to
+                                <strong>8-bit Integers (INT8)</strong>. We will
+                                utilize AVX2 integer intrinsics
+                                (`_mm256_add_epi8`) to perform dot products,
+                                achieving ~4x throughput over FP32 while
+                                reducing memory bandwidth by 75%.
+                            </p>
+                        </div>
+                        <div
+                            class="bg-black/30 p-6 rounded-2xl border border-slate-800"
+                        >
+                            <h4
+                                class="text-red-400 font-bold text-xs uppercase mb-2"
+                            >
+                                TinyML Architecture
+                            </h4>
+                            <p class="text-xs text-slate-400">
+                                Adoption of
+                                <strong>MobileNetV3-Small</strong> or custom
+                                auto-encoder backbones tailored for satellite
+                                tile classification. Models will be pruned to
+                                remove redundant connections before compilation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-10 rounded-[3rem] border border-slate-800">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div
+                            class="bg-cyan-500/20 p-3 rounded-xl text-cyan-400"
+                        >
+                            <i class="fas fa-terminal text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">
+                                OpticScript DSL (F#)
+                            </h3>
+                            <p
+                                class="text-xs text-slate-500 uppercase tracking-widest font-bold"
+                            >
+                                Planned Q1 2027
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/2">
+                            <p
+                                class="text-slate-400 text-sm leading-relaxed mb-4"
+                            >
+                                To replace complex JSON configs, we will
+                                implement a
+                                <strong
+                                    >Type-Safe Domain Specific Language
+                                    (DSL)</strong
+                                >
+                                using F#. This allows scientists to define
+                                processing pipelines with compiler-checked
+                                safety before execution.
+                            </p>
+                            <ul class="space-y-3 text-xs text-slate-500">
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-check text-cyan-500"></i>
+                                    <span
+                                        ><strong>Algebraic Data Types:</strong>
+                                        Impossible to represent invalid pipeline
+                                        states.</span
+                                    >
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-check text-cyan-500"></i>
+                                    <span
+                                        ><strong>CLI Wrapper:</strong> Compiles
+                                        DSL scripts into optimized arguments for
+                                        the C++ engine.</span
+                                    >
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-check text-cyan-500"></i>
+                                    <span
+                                        ><strong>Zero-Overhead:</strong> The DSL
+                                        is strictly a configuration generator;
+                                        runtime remains C++.</span
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                        <div
+                            class="md:w-1/2 bg-slate-900/80 p-6 rounded-2xl font-mono text-[10px] border-l-2 border-cyan-500 text-slate-300"
+                        >
+                            <p class="text-slate-500 mb-2">
+                                // Example OpticScript (F#)
+                            </p>
+                            <p>
+                                <span class="text-purple-400">pipeline</span> {
+                            </p>
+                            <p class="pl-4">
+                                <span class="text-blue-400">input</span>
+                                <span class="text-green-400"
+                                    >"sentinel_data.tif"</span
+                                >
+                            </p>
+                            <p class="pl-4">
+                                <span class="text-blue-400">stage</span> (Blur
+                                <span class="text-orange-400"
+                                    >Kernel.Gaussian</span
+                                >
+                                5x5)
+                            </p>
+                            <p class="pl-4">
+                                <span class="text-blue-400">stage</span>
+                                (Classify
+                                <span class="text-orange-400"
+                                    >Model.TinyUrban</span
+                                >)
+                            </p>
+                            <p class="pl-4">
+                                <span class="text-blue-400">output</span>
+                                <span class="text-green-400">"result.geo"</span>
+                            </p>
+                            <p>}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="py-12 text-center bg-black/40 border-t border-slate-900">
+            <p
+                class="text-slate-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-2"
+            >
+                Project Optic // Version 2.0 (Architecture Locked)
+            </p>
+            <p
+                class="text-slate-500 text-[9px] font-medium tracking-[0.2em] uppercase opacity-50"
+            >
+                Department of Computer Science & Engineering
+            </p>
+        </footer>
+
+        <script>
+            // TIMER LOGIC
+            let sec = 0;
+            let timer = null;
+            function startTimer() {
+                timer = setInterval(() => {
+                    sec++;
+                    let m = Math.floor(sec / 60);
+                    let s = sec % 60;
+                    document.getElementById("displayTime").innerText =
+                        `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+
+                    if (sec >= 480 && sec < 600) {
+                        document
+                            .getElementById("timerContainer")
+                            .classList.add("timer-warning");
+                        document
+                            .getElementById("timerIcon")
+                            .classList.replace(
+                                "fa-hourglass-start",
+                                "fa-hourglass-half",
+                            );
+                    } else if (sec >= 600) {
+                        clearInterval(timer);
+                        document
+                            .getElementById("timerContainer")
+                            .classList.replace("timer-warning", "timer-stop");
+                        document.getElementById("displayTime").innerText =
+                            "10:00";
+                        document
+                            .getElementById("timerIcon")
+                            .classList.replace(
+                                "fa-hourglass-half",
+                                "fa-hourglass-end",
+                            );
+                    }
+                }, 1000);
+            }
+        </script>
+    </body>
 </html>
