@@ -47,8 +47,16 @@
                     <div>
                         <label for="filter-type">Restoration Method:</label>
                         <select id="filter-type">
-                            <option value="sat">SAT Box Blur (Fast)</option>
-                            <option value="naive">Naive Box Blur (Slow)</option>
+                            <optgroup label="Variable Size (Use Slider)">
+                                <option value="sat">SAT Box Blur (Fast)</option>
+                                <option value="naive">Naive Box Blur (Slow)</option>
+                            </optgroup>
+                            <optgroup label="Fixed 3x3 Kernels">
+                                <option value="sharpen">Sharpen</option>
+                                <option value="edge">Edge Detection</option>
+                                <option value="gaussian">Gaussian Blur</option>
+                                <option value="emboss">Emboss</option>
+                            </optgroup>
                         </select>
                     </div>
                 </div>
