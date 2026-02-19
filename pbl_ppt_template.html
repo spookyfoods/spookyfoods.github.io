@@ -216,7 +216,7 @@
                         </h3>
                         <p class="text-sm text-slate-500 italic">
                             We implement a
-                            <strong>"Rolling Ring Buffer"</strong> strategy.
+                            <strong>Rolling Ring Buffer</strong> strategy.
                             Instead of loading the image, we `mmap` the file and
                             "decay" memory pages instantly after processing,
                             ensuring O(1) memory usage regardless of image
@@ -250,8 +250,8 @@
                         </h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
                             Utilizes POSIX <code>mmap</code> with a custom
-                            <strong>Virtual Tile Manager</strong>. The "Rolling
-                            Ring Buffer" keeps only active scanlines in cache.
+                            <strong>Virtual Tile Manager</strong>. Rolling
+                            Ring Buffer keeps only active scanlines in cache.
                             As lines are processed, the memory is "decayed"
                             (reused) for incoming lines.
                         </p>
@@ -298,7 +298,7 @@
                         <p class="text-sm text-slate-400 leading-relaxed">
                             Standard <code>malloc/new</code> causes heap
                             fragmentation. We implement a
-                            <strong>Linear "Bump" Arena Allocator</strong> that
+                            <strong>Linear Arena Allocator</strong> that
                             pre-allocates a massive block at startup. Allocation
                             is a simple integer increment; deallocation is
                             instant.
@@ -321,7 +321,7 @@
                         </h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
                             Implements a
-                            <strong>"Rolling Wave" Producer-Consumer</strong>
+                            <strong>Rolling Producer-Consumer</strong>
                             model. Scout Threads prefetch raw bytes, while
                             Builder Threads process tiles using Work-Stealing
                             and an "N-2" Dependency Rule to handle halo rows
