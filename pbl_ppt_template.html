@@ -104,7 +104,7 @@
                     >
                     <span
                         class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1"
-                        >High-Performance Geospatial Runtime</span
+                        >High-Performance C++ Image Processing Engine</span
                     >
                 </div>
             </div>
@@ -126,7 +126,7 @@
                 <a
                     href="#future-ml"
                     class="hover:text-blue-400 transition text-purple-400"
-                    >Future: ML & DSL</a
+                    >Future Work</a
                 >
             </div>
         </nav>
@@ -136,21 +136,18 @@
                 <div
                     class="inline-block px-4 py-1 border border-slate-800 rounded-full text-slate-500 text-[10px] font-mono mb-6 uppercase tracking-widest"
                 >
-                    Target: Edge Devices / x86_64 Linux (Drones)
+                    Target: Edge Devices / POSIX Linux (UAV &amp; Satellite)
                 </div>
                 <h1
                     class="text-6xl md:text-7xl font-extrabold mb-8 uppercase leading-tight"
                 >
-                    <span class="gradient-text">Projct Optic</span><br />Bare
-                    Metal, Clothed Intelligence
+                    <span class="gradient-text">Project Optic</span><br />Bare
+                    Metal, Bounded Intelligence
                 </h1>
                 <p
                     class="text-slate-400 max-w-3xl mx-auto italic text-lg leading-relaxed border-l-2 border-blue-500/30 pl-6 text-left"
                 >
-                    Core Mission: To eliminate the I/O Wall in remote sensing by
-                    processing gigapixel-scale 16-bit multispectral data
-                    (Sentinel-2 L1C/L2A) faster than the disk can read it,
-                    utilizing a custom Zero-Copy architecture.
+                    Core Mission: A dual-module C++ engine that proves hardware memory limits are not a barrier to geospatial analytics. The Base Engine processes standard imagery via a custom ThreadPool; the Out-of-Core Spike processes massive 16-bit aerospace datasets (e.g., Sentinel-2, 10980×10980 px, 242 MB) under a strict, mathematically verified 32 MB physical RAM constraint using POSIX <code>mmap</code> and the ST-BIT binary format.
                 </p>
             </section>
 
@@ -162,31 +159,33 @@
                     class="glass p-10 rounded-[2.5rem] flex flex-col justify-center border-l-4 border-blue-600"
                 >
                     <h2 class="text-3xl font-extrabold mb-6">
-                        The Problem: Abstraction Overhead
+                        The Problem: The Memory Wall
                     </h2>
                     <p class="text-slate-400 leading-relaxed text-justify mb-4">
-                        Standard GIS tools (GDAL/Rasterio) rely on heavy
-                        abstractions and Python bindings. This creates
-                        significant bottlenecks when processing 100-megapixel
-                        images on edge hardware:
+                        Standard heap allocation triggers an immediate
+                        Out-Of-Memory (OOM) failure when processing large
+                        GeoTIFFs (e.g., a 242 MB Sentinel-2 file) on
+                        constrained edge hardware with a 32 MB RAM target:
                     </p>
                     <ul
                         class="list-disc list-inside text-slate-400 text-sm space-y-3"
                     >
                         <li>
-                            <strong class="text-white">Memory Bloat:</strong>
-                            Loading a full 4GB TIFF into RAM causes immediate
-                            swapping on field laptops.
+                            <strong class="text-white">OOM Failure:</strong>
+                            Loading a large multispectral image into
+                            <code>std::vector</code> triggers immediate heap
+                            exhaustion on embedded edge hardware.
                         </li>
                         <li>
-                            <strong class="text-white">The GIL:</strong>
-                            Python's Global Interpreter Lock makes per-pixel
-                            manipulation prohibitively slow.
+                            <strong class="text-white">Cache Thrashing:</strong>
+                            Row-major disk layouts force the CPU to jump millions
+                            of bytes on the Y-axis, causing catastrophic I/O
+                            cache misses during out-of-core execution.
                         </li>
                         <li>
-                            <strong class="text-white">Cache Misses:</strong>
-                            "Vector of Vectors" (Jagged Arrays) destroys CPU
-                            cache locality.
+                            <strong class="text-white">Heap Fragmentation:</strong>
+                            Dynamic <code>new</code>/<code>malloc</code> is fundamentally
+                            insufficient when the entire dataset exceeds physical RAM.
                         </li>
                     </ul>
                 </div>
@@ -200,10 +199,10 @@
                             State-of-the-Art Analysis
                         </h3>
                         <p class="text-sm text-slate-500 italic">
-                            Existing solutions like GDAL utilize standard OS
-                            paging. Project Optic replaces this with manual
-                            virtual memory management to strictly control L1/L2
-                            cache usage.
+                            Existing solutions load entire datasets into heap
+                            memory using standard allocators. This is viable for
+                            desktop-class RAM but causes immediate OOM failures
+                            on edge hardware constrained to 32 MB.
                         </p>
                     </div>
                     <div
@@ -212,15 +211,15 @@
                         <h3
                             class="text-purple-400 font-bold text-xs uppercase tracking-widest mb-2"
                         >
-                            Our Innovation: Zero-Copy
+                            Our Innovation: ST-BIT + madvise
                         </h3>
                         <p class="text-sm text-slate-500 italic">
-                            We implement a
-                            <strong>Rolling Ring Buffer</strong> strategy.
-                            Instead of loading the image, we `mmap` the file and
-                            "decay" memory pages instantly after processing,
-                            ensuring O(1) memory usage regardless of image
-                            height.
+                            We flatten data into a
+                            <strong>Spatio-Temporal Binary Interleaved Tile (ST-BIT)</strong>
+                            format of 512×512 macro-blocks. POSIX <code>mmap</code>
+                            maps the file zero-copy; <code>madvise(MADV_DONTNEED)</code>
+                            evicts trailing pages per row, enforcing O(1) memory
+                            usage regardless of file size.
                         </p>
                     </div>
                 </div>
@@ -249,11 +248,12 @@
                             Storage Engine (Virtual Memory)
                         </h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
-                            Utilizes POSIX <code>mmap</code> with a custom
-                            <strong>Virtual Tile Manager</strong>. Rolling
-                            Ring Buffer keeps only active scanlines in cache.
-                            As lines are processed, the memory is "decayed"
-                            (reused) for incoming lines.
+                            Uses POSIX <code>mmap</code> to create a
+                            <strong>zero-copy virtual memory map</strong> of
+                            the ST-BIT dataset. An eviction controller issues
+                            <code>madvise(MADV_DONTNEED)</code> signals to purge
+                            trailing pages per tile row, maintaining a sliding
+                            memory window strictly under 32 MB.
                         </p>
                     </div>
 
@@ -269,17 +269,17 @@
                             class="fas fa-microchip text-slate-600 text-3xl mb-4 group-hover:text-purple-500 transition-colors"
                         ></i>
                         <h3 class="font-bold text-xl mb-2">
-                            Compute Core (SIMD)
+                            Compute Core (ThreadPool)
                         </h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
-                            Data is laid out in flat 1D arrays
-                            (<code>std::vector&lt;float&gt;</code>). We utilize
-                            manual
-                            <strong>AVX2 Intrinsics</strong>
-                            (<code>_mm256_fmadd_ps</code>) to process 8 pixels
-                            per CPU cycle. We replace standard 2D convolution
-                            with <strong>Separable Kernels</strong> (two 1D
-                            passes), reducing complexity by ~85%.
+                            Image matrix is partitioned into horizontal bands
+                            (tasks) and distributed to a custom
+                            <strong>C++ ThreadPool</strong>. Worker threads
+                            apply spatial filters (Box Blur, Gaussian, Sobel)
+                            concurrently via
+                            <code>std::mutex</code> locks and
+                            <code>std::condition_variable</code> synchronization,
+                            guaranteeing zero race conditions.
                         </p>
                     </div>
 
@@ -294,14 +294,15 @@
                         <i
                             class="fas fa-memory text-slate-600 text-3xl mb-4 group-hover:text-green-500 transition-colors"
                         ></i>
-                        <h3 class="font-bold text-xl mb-2">Memory Arena</h3>
+                        <h3 class="font-bold text-xl mb-2">Data Layout (ST-BIT)</h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
-                            Standard <code>malloc/new</code> causes heap
-                            fragmentation. We implement a
-                            <strong>Linear Arena Allocator</strong> that
-                            pre-allocates a massive block at startup. Allocation
-                            is a simple integer increment; deallocation is
-                            instant.
+                            The Base Engine stores pixels as a contiguous
+                            <code>std::vector&lt;Pixel&gt;</code> (1D flat array)
+                            with 2D coordinates flattened as
+                            <code>Y * Width + X</code>. The Spike uses
+                            <strong>512×512 macro-blocks</strong>, aligning 2D
+                            spatial locality of the convolution kernel with the
+                            1D physical locality of the SSD.
                         </p>
                     </div>
 
@@ -317,15 +318,16 @@
                             class="fas fa-network-wired text-slate-600 text-3xl mb-4 group-hover:text-orange-500 transition-colors"
                         ></i>
                         <h3 class="font-bold text-xl mb-2">
-                            Scheduler (Concurrency)
+                            CLI Dispatcher (Dual-Mode)
                         </h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
-                            Implements a
-                            <strong>Rolling Producer-Consumer</strong>
-                            model. Scout Threads prefetch raw bytes, while
-                            Builder Threads process tiles using Work-Stealing
-                            and an "N-2" Dependency Rule to handle halo rows
-                            without locking.
+                            A CLI routes execution via
+                            <code>--mode [standard | out-of-core]</code>.
+                            Standard mode activates the ThreadPool engine;
+                            out-of-core mode activates the Spike. Parameters
+                            include <code>--input</code>,
+                            <code>--filter</code>, and
+                            <code>--threads N</code> for pool sizing.
                         </p>
                     </div>
                 </div>
@@ -348,12 +350,16 @@
                             class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-blue-500"
                         ></span>
                         <h4 class="font-bold text-lg text-white">
-                            1. Ingest & Map
+                            1. Ingest &amp; Map
                         </h4>
                         <p class="text-slate-400 text-sm mt-1">
-                            CLI receives <code>input.tif</code>. Header parser
-                            reads IFD tags. <code>mmap</code> assigns file
-                            descriptor to virtual memory.
+                            CLI receives <code>--input</code>.
+                            <strong>Base Engine:</strong> <code>stb_image</code>
+                            decodes PNG/JPG into a contiguous heap array.
+                            <strong>Spike:</strong> Pre-flattened
+                            <code>sentinel_raw.bin</code> (ST-BIT, 242 MB)
+                            mapped zero-copy into virtual address space via
+                            <code>mmap</code>.
                         </p>
                     </div>
 
@@ -362,12 +368,16 @@
                             class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-purple-500"
                         ></span>
                         <h4 class="font-bold text-lg text-white">
-                            2. Stream & Compute (Pass 1 & 2)
+                            2. Stream &amp; Compute
                         </h4>
                         <p class="text-slate-400 text-sm mt-1">
-                            Scout Thread loads rows into the Arena. Threads
-                            calculate row-wise sums (AVX), then column-wise sums
-                            using Rolling Buffer history.
+                            <strong>Base Engine:</strong> ThreadPool partitions
+                            the image into horizontal bands; workers apply
+                            spatial filters (Box Blur, Gaussian, Sobel, Sharpen)
+                            concurrently. <strong>Spike:</strong> Convolution
+                            kernel sweeps 22&times;22 tile grid;
+                            <code>madvise(MADV_DONTNEED)</code>
+                            evicts trailing tile rows per step.
                         </p>
                     </div>
 
@@ -376,14 +386,15 @@
                             class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-green-500"
                         ></span>
                         <h4 class="font-bold text-lg text-white">
-                            3. Analysis & Intelligence
+                            3. Verify &amp; Output
                         </h4>
                         <p class="text-slate-400 text-sm mt-1">
-                            Optional
-                            <strong>K-Means Clustering</strong> (Lloyd’s
-                            Algorithm) is applied to classify pixels into
-                            "Water," "Vegetation," and "Urban" without training
-                            data. Distance calcs are vectorized.
+                            Processed matrix written to disk. Spike telemetry
+                            confirmed RAM stabilized at <strong>31.5 MB</strong>
+                            (under 32 MB constraint). Cold read:
+                            <strong>11.56 ms</strong>; hot (cached) read:
+                            <strong>1.69 ms</strong>. Full 3&times;3 Box Blur
+                            over 10980&times;10980 px: <strong>24.22 s</strong>.
                         </p>
                     </div>
                 </div>
@@ -396,7 +407,7 @@
                 <h2
                     class="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] mb-12"
                 >
-                    Technical Roadmap & Future Work
+                    Technical Roadmap &amp; Future Work
                 </h2>
                 <div class="grid md:grid-cols-4 gap-6 text-left">
                     <div
@@ -407,9 +418,9 @@
                         >
                             Phase 1
                         </p>
-                        <p class="font-bold text-white">Metal Core</p>
+                        <p class="font-bold text-white">Base Engine</p>
                         <p class="text-xs text-slate-500 mt-2">
-                            MatrixDense class & AVX2 math implementation.
+                            Custom C++ ThreadPool + <code>stb_image</code> decoder. Spatial filters (Box Blur, Gaussian, Sobel, Sharpen) on standard PNG/JPG.
                         </p>
                     </div>
 
@@ -421,9 +432,9 @@
                         >
                             Phase 2
                         </p>
-                        <p class="font-bold text-white">Math Upgrade</p>
+                        <p class="font-bold text-white">Out-of-Core Spike</p>
                         <p class="text-xs text-slate-500 mt-2">
-                            Separable Kernels for O(N) complexity reduction.
+                            ST-BIT binary format + POSIX <code>mmap</code> + <code>madvise</code> sliding window. 32 MB RAM constraint verified on 242 MB dataset.
                         </p>
                     </div>
 
@@ -433,12 +444,11 @@
                         <p
                             class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2"
                         >
-                            Phase 4
+                            Phase 3
                         </p>
-                        <p class="font-bold text-white">Concurrency</p>
+                        <p class="font-bold text-white">SIMD Acceleration</p>
                         <p class="text-xs text-slate-500 mt-2">
-                            Thread Pool with Work Stealing & Split-Row
-                            Parallelism.
+                            AVX2 (x86) / NEON (ARM) / RISC-V RVV intrinsics for batch pixel processing per CPU clock cycle.
                         </p>
                     </div>
 
@@ -448,12 +458,11 @@
                         <p
                             class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mb-2"
                         >
-                            Phase 6
+                            Phase 4
                         </p>
-                        <p class="font-bold text-white">Delivery</p>
+                        <p class="font-bold text-white">Async I/O &amp; CSD</p>
                         <p class="text-xs text-slate-400 mt-2">
-                            Dockerize & Benchmarking Script
-                            (<code>demo.py</code>).
+                            Linux <code>io_uring</code> non-blocking prefetch + offloading convolution logic to Computational Storage Drives.
                         </p>
                     </div>
                 </div>
@@ -467,30 +476,33 @@
                     class="text-3xl font-black text-center uppercase tracking-tight"
                 >
                     Future Expansion:
-                    <span class="gradient-text">Project Cortex</span> & DSL
+                    <span class="gradient-text">Architectural Directions</span>
                 </h2>
 
                 <div class="glass p-10 rounded-[3rem] border border-slate-800">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="bg-red-500/20 p-3 rounded-xl text-red-400">
-                            <i class="fas fa-brain text-2xl"></i>
+                            <i class="fas fa-microchip text-2xl"></i>
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-white">
-                                Phase 7: Bare-Metal Edge ML
+                                RISC-V &amp; SIMD Acceleration
                             </h3>
                             <p
                                 class="text-xs text-slate-500 uppercase tracking-widest font-bold"
                             >
-                                Planned Q4 2026
+                                Compute Layer Optimization
                             </p>
                         </div>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6">
-                        We will extend the C++ core to support
-                        <strong>inference-only execution</strong> of lightweight
-                        ML models directly on the edge device, bypassing heavy
-                        frameworks like TensorFlow.
+                        As edge environments increasingly adopt open-source silicon,
+                        the engine will be optimized for the
+                        <strong>RISC-V ISA</strong> using the
+                        <strong>RVV (RISC-V Vector) extension</strong>,
+                        enabling massive SIMD convolutions directly at the hardware
+                        level to drastically reduce power consumption on remote UAV
+                        and satellite deployments.
                     </p>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div
@@ -499,15 +511,15 @@
                             <h4
                                 class="text-red-400 font-bold text-xs uppercase mb-2"
                             >
-                                Quantization Strategy
+                                AVX2 / NEON Hooks (Near-Term)
                             </h4>
                             <p class="text-xs text-slate-400">
-                                Weights will be compressed to
-                                <strong>8-bit Integers (INT8)</strong>. We will
-                                utilize AVX2 integer intrinsics
-                                (`_mm256_add_epi8`) to perform dot products,
-                                achieving ~4x throughput over FP32 while
-                                reducing memory bandwidth by 75%.
+                                The contiguous <code>std::vector&lt;Pixel&gt;</code>
+                                layout and ST-BIT macro-blocks are structurally primed
+                                for SIMD. Maintainers can extend the
+                                <strong>Kernel class</strong> with AVX2 (x86) or
+                                NEON (ARM) intrinsics, processing multiple pixels
+                                per CPU cycle without altering threading logic.
                             </p>
                         </div>
                         <div
@@ -516,14 +528,15 @@
                             <h4
                                 class="text-red-400 font-bold text-xs uppercase mb-2"
                             >
-                                TinyML Architecture
+                                RISC-V RVV (Long-Term)
                             </h4>
                             <p class="text-xs text-slate-400">
-                                Adoption of
-                                <strong>MobileNetV3-Small</strong> or custom
-                                auto-encoder backbones tailored for satellite
-                                tile classification. Models will be pruned to
-                                remove redundant connections before compilation.
+                                Targeting the open-source silicon ecosystem for
+                                edge UAV deployments. The
+                                <strong>RVV extension</strong> will allow the
+                                engine to execute large-width SIMD convolutions
+                                natively, minimizing power draw on battery-constrained
+                                remote sensors.
                             </p>
                         </div>
                     </div>
@@ -534,13 +547,15 @@
                         <div
                             class="bg-cyan-500/20 p-3 rounded-xl text-cyan-400"
                         >
-                            <i class="fas fa-terminal text-2xl"></i>
+                            <i class="fas fa-hdd text-2xl"></i>
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-white">
-                                OpticScript DSL (F#)
+                                io_uring &amp; Computational Storage Drives
                             </h3>
-
+                            <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">
+                                I/O Layer Evolution
+                            </p>
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row gap-8">
@@ -548,39 +563,38 @@
                             <p
                                 class="text-slate-400 text-sm leading-relaxed mb-4"
                             >
-                                To replace complex JSON configs, we will
-                                implement a
-                                <strong
-                                    >Type-Safe Domain Specific Language
-                                    (DSL)</strong
-                                >
-                                using F#. This allows scientists to define
-                                processing pipelines with compiler-checked
-                                safety before execution.
+                                While <code>mmap</code> page-faults control the RAM
+                                footprint, they <strong>block the CPU</strong>
+                                synchronously. Two directions eliminate this bottleneck
+                                entirely at different hardware layers.
                             </p>
                             <ul class="space-y-3 text-xs text-slate-500">
                                 <li class="flex items-center gap-2">
                                     <i class="fas fa-check text-cyan-500"></i>
                                     <span
-                                        ><strong>Algebraic Data Types:</strong>
-                                        Impossible to represent invalid pipeline
-                                        states.</span
+                                        ><strong>Linux io_uring:</strong>
+                                        Submit massive batches of async disk reads,
+                                        prefetching ST-BIT tile rows into the CPU cache
+                                        without blocking the convolution threads.</span
                                     >
                                 </li>
                                 <li class="flex items-center gap-2">
                                     <i class="fas fa-check text-cyan-500"></i>
                                     <span
-                                        ><strong>CLI Wrapper:</strong> Compiles
-                                        DSL scripts into optimized arguments for
-                                        the C++ engine.</span
+                                        ><strong>Modular I/O Backend:</strong> The
+                                        codebase isolates the memory mapper, allowing
+                                        a seamless swap from synchronous
+                                        <code>mmap</code> to async APIs.</span
                                     >
                                 </li>
                                 <li class="flex items-center gap-2">
                                     <i class="fas fa-check text-cyan-500"></i>
                                     <span
-                                        ><strong>Zero-Overhead:</strong> The DSL
-                                        is strictly a configuration generator;
-                                        runtime remains C++.</span
+                                        ><strong>CSD Offloading:</strong> Push
+                                        JIT decompression and convolution logic onto
+                                        NVMe devices with embedded ARM/FPGA cores,
+                                        bypassing the Memory Wall at the hardware
+                                        boundary entirely.</span
                                     >
                                 </li>
                             </ul>
@@ -589,36 +603,15 @@
                             class="md:w-1/2 bg-slate-900/80 p-6 rounded-2xl font-mono text-[10px] border-l-2 border-cyan-500 text-slate-300"
                         >
                             <p class="text-slate-500 mb-2">
-                                // Example OpticScript (F#)
+                                // Spike Telemetry Output (Actual)
                             </p>
-                            <p>
-                                <span class="text-purple-400">pipeline</span> {
-                            </p>
-                            <p class="pl-4">
-                                <span class="text-blue-400">input</span>
-                                <span class="text-green-400"
-                                    >"sentinel_data.tif"</span
-                                >
-                            </p>
-                            <p class="pl-4">
-                                <span class="text-blue-400">stage</span> (Blur
-                                <span class="text-orange-400"
-                                    >Kernel.Gaussian</span
-                                >
-                                5x5)
-                            </p>
-                            <p class="pl-4">
-                                <span class="text-blue-400">stage</span>
-                                (Classify
-                                <span class="text-orange-400"
-                                    >Model.TinyUrban</span
-                                >)
-                            </p>
-                            <p class="pl-4">
-                                <span class="text-blue-400">output</span>
-                                <span class="text-green-400">"result.geo"</span>
-                            </p>
-                            <p>}</p>
+                            <p><span class="text-blue-400">[SPIKE]</span> Virtual Map Created: <span class="text-green-400">242 MB</span></p>
+                            <p><span class="text-blue-400">[SPIKE]</span> Tile Grid: <span class="text-orange-400">22x22</span> (484 tiles)</p>
+                            <p class="mt-2"><span class="text-purple-400">Cold Read</span> (5000,5000): <span class="text-yellow-400">11.56 ms</span></p>
+                            <p><span class="text-purple-400">Hot  Read</span> (5000,5000): <span class="text-green-400">1.69 ms</span></p>
+                            <p class="mt-2"><span class="text-blue-400">[SPIKE]</span> Evicting Row 19... <span class="text-green-400">OK</span></p>
+                            <p><span class="text-blue-400">[SPIKE]</span> RAM stabilized at <span class="text-green-400">31.5 MB</span></p>
+                            <p class="mt-2 text-green-500">[Status] Pipeline Complete. ✓</p>
                         </div>
                     </div>
                 </div>
@@ -629,7 +622,7 @@
             <p
                 class="text-slate-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-2"
             >
-                Project Optic // Version 2.0 (Architecture Locked)
+                Project Optic // MVP Delivered — Dual-Module C++ Engine
             </p>
             <p
                 class="text-slate-500 text-[9px] font-medium tracking-[0.2em] uppercase opacity-50"
